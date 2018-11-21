@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>1079607153669-2t56e6ibpovhuv16fbfrirghqn8s82gb.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1079607153669-2t56e6ibpovhuv16fbfrirghqn8s82gb</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDXBXT51WHG1Tu-RLHxfATbcIgBcspCQ_A</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1079607153669</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.IsaacMaya.Inventario</string>
+	<key>PROJECT_ID</key>
+	<string>inventariopos-d70fc</string>
+	<key>STORAGE_BUCKET</key>
+	<string>inventariopos-d70fc.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1079607153669:ios:3b3af94f06bc2bef</string>
+	<key>DATABASE_URL</key>
+	<string>https://inventariopos-d70fc.firebaseio.com</string>
+</dict>
+</plist>
