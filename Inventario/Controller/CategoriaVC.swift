@@ -9,8 +9,9 @@
 import UIKit
 import SideMenu
 import Firebase
+import SVProgressHUD
 
-class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
+class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
     
 
@@ -19,11 +20,16 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     @IBOutlet weak var categoria: UITextField!
     @IBOutlet weak var imagen: UIImageView!
     @IBOutlet weak var tabla: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     
     let db = Firestore.firestore()
     let imagePicker = UIImagePickerController()
+    
+    //MARK: VARIABLES PARA UISERACHBAR
+    var dataFiltered = [String]()
     var categorias = [String]()
+    var isSearching = false
     
     
     
@@ -34,6 +40,8 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         imagePicker.delegate = self
         imagePicker.allowsEditing = false
         
+        searchBar.delegate = self
+        searchBar.returnKeyType = UIReturnKeyType.done
         
         
         let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(SwipeAction(swipe:)))
@@ -45,24 +53,80 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        SVProgressHUD.show(withStatus: "Cargando")
+        DispatchQueue.global(qos: .background).async {
+            self.loadFireStoreData()
+        }
+    }
+    
+    
+    //MARK: Quitar teclado
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        
+        return true
+    }
     
     
     
-    //MARK: TABLA
+    
+    //MARK: TABLA DE CATEGORIAS
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        if isSearching {
+            return dataFiltered.count
+        }
+        
         return categorias.count
     }
+    
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
-        cell.textLabel?.text = categorias[indexPath.row]
+        
+        
+        
+        if isSearching{
+            cell.textLabel?.text = dataFiltered[indexPath.row]
+        }
+        else {
+            cell.textLabel?.text = categorias[indexPath.row]
+        }
+        
         
         return cell
     }
     
-    //MARK: Funciones importantes
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        nombre.text = categorias[indexPath.row]
+    }
+    
+    //MARK: BUSQUEDA DE CATEGORIAS
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchBar.text == nil || searchBar.text == "" {
+            isSearching = false
+            view.endEditing(true)
+            tabla.reloadData()
+        } else {
+            isSearching = true
+            dataFiltered = categorias.filter({$0.contains(searchBar.text!)})
+            tabla.reloadData()
+        }
+    }
+    
+    
+    
+    
+    //MARK: Funciones importantes
     //MARK: Metodo Importante
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
@@ -201,6 +265,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
                     print(self.categorias)
                 }
                 self.tabla.reloadData()
+                SVProgressHUD.dismiss()
                 
                 
             }

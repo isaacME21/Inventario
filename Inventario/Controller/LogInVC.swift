@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import SVProgressHUD
 
 class LogInVC: UIViewController {
 
@@ -21,6 +22,8 @@ class LogInVC: UIViewController {
         super.viewDidLoad()
 
     }
+    
+
     
     
     //MARK: Quitar teclado
@@ -45,33 +48,37 @@ class LogInVC: UIViewController {
     
     //MARK: Metodo de firebase para el LogIn
     @IBAction func logIn(_ sender: UIButton) {
+        let correoTemp = Correo.text
+        let contraseñaTemp = Contraseña.text
         
-        Auth.auth().signIn(withEmail: Correo.text!, password: Contraseña.text!) { (DataResult, error) in
+        SVProgressHUD.show(withStatus: "Cargando")
+        DispatchQueue.global(qos: .background).async {
             
-            if error != nil{
-                print(error!)
+            Auth.auth().signIn(withEmail: correoTemp! , password: contraseñaTemp!) { (DataResult, error) in
                 
-                let alert = UIAlertController(title: "Error de Inicio de Sesion", message: "Lo sentimos, el usuario o la contraseña son incorrectos", preferredStyle: .alert)
+                if error != nil{
+                    print(error!)
+                    
+                    let alert = UIAlertController(title: "Error de Inicio de Sesion", message: "Lo sentimos, el usuario o la contraseña son incorrectos", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
                     
-                    self.present(alert, animated: true)
+                    DispatchQueue.main.async {
+                        self.present(alert, animated: true)
+                    }
+                    
+                }
+                else{
+                    //Logeo exitoso
+                    SVProgressHUD.dismiss()
+                    self.performSegue(withIdentifier: "gotoMain", sender: self)
+                }
             }
-            else{
-                //Logeo exitoso
-                
-                self.performSegue(withIdentifier: "gotoMain", sender: self)
-            }
+
         }
 
     }
     
     
     
-    
-    
-
-    
-    
-  
 
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		116FBAD82EDCBE1D0951561E /* Pods_Inventario.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 997BA71AD6E89FD2CFE8390B /* Pods_Inventario.framework */; };
+		732F02DC21A7392D003FB74F /* barcode.png in Resources */ = {isa = PBXBuildFile; fileRef = 732F02DB21A7392C003FB74F /* barcode.png */; };
 		7344750A2194A4F20054AEB7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 734475092194A4F10054AEB7 /* GoogleService-Info.plist */; };
 		735BCC4E2190B93100EC8710 /* CategoriaVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735BCC4D2190B93100EC8710 /* CategoriaVC.swift */; };
 		735BCC502190B95100EC8710 /* ProductoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735BCC4F2190B95100EC8710 /* ProductoVC.swift */; };
@@ -18,6 +19,7 @@
 		736DE9B021851932007EC5DE /* Inventario.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 736DE9AE21851932007EC5DE /* Inventario.xcdatamodeld */; };
 		736DE9B221851937007EC5DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 736DE9B121851937007EC5DE /* Assets.xcassets */; };
 		736DE9B521851937007EC5DE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 736DE9B321851937007EC5DE /* LaunchScreen.storyboard */; };
+		7370588721A9FCF40018EAB4 /* CodigosDeBarras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7370588621A9FCF40018EAB4 /* CodigosDeBarras.swift */; };
 		737296782194EE7C00832591 /* LogInVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737296772194EE7C00832591 /* LogInVC.swift */; };
 		7388234E218A23CA0051D7A3 /* configuration-with-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 7388234D218A23CA0051D7A3 /* configuration-with-gear.png */; };
 		73882350218A2C190051D7A3 /* ConfigurationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7388234F218A2C180051D7A3 /* ConfigurationVC.swift */; };
@@ -25,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		094A1BF9CC10C9D535DCCC56 /* Pods-Inventario.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Inventario.release.xcconfig"; path = "Pods/Target Support Files/Pods-Inventario/Pods-Inventario.release.xcconfig"; sourceTree = "<group>"; };
+		732F02DB21A7392C003FB74F /* barcode.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = barcode.png; sourceTree = "<group>"; };
 		734475092194A4F10054AEB7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		735BCC4D2190B93100EC8710 /* CategoriaVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriaVC.swift; sourceTree = "<group>"; };
 		735BCC4F2190B95100EC8710 /* ProductoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductoVC.swift; sourceTree = "<group>"; };
@@ -37,6 +40,7 @@
 		736DE9B121851937007EC5DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		736DE9B421851937007EC5DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		736DE9B621851938007EC5DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7370588621A9FCF40018EAB4 /* CodigosDeBarras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodigosDeBarras.swift; sourceTree = "<group>"; };
 		737296772194EE7C00832591 /* LogInVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInVC.swift; sourceTree = "<group>"; };
 		7388234D218A23CA0051D7A3 /* configuration-with-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "configuration-with-gear.png"; sourceTree = "<group>"; };
 		7388234F218A2C180051D7A3 /* ConfigurationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationVC.swift; sourceTree = "<group>"; };
@@ -103,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				736BA71E218CCA1F0058CCE1 /* MenuTVC.swift */,
+				7370588621A9FCF40018EAB4 /* CodigosDeBarras.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -132,6 +137,7 @@
 			isa = PBXGroup;
 			children = (
 				7388234D218A23CA0051D7A3 /* configuration-with-gear.png */,
+				732F02DB21A7392C003FB74F /* barcode.png */,
 			);
 			path = Imagenes;
 			sourceTree = "<group>";
@@ -204,6 +210,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				732F02DC21A7392D003FB74F /* barcode.png in Resources */,
 				736DE9B521851937007EC5DE /* LaunchScreen.storyboard in Resources */,
 				736DE9B221851937007EC5DE /* Assets.xcassets in Resources */,
 				7344750A2194A4F20054AEB7 /* GoogleService-Info.plist in Resources */,
@@ -298,6 +305,7 @@
 				736DE9A821851932007EC5DE /* AppDelegate.swift in Sources */,
 				736DE9B021851932007EC5DE /* Inventario.xcdatamodeld in Sources */,
 				73882350218A2C190051D7A3 /* ConfigurationVC.swift in Sources */,
+				7370588721A9FCF40018EAB4 /* CodigosDeBarras.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

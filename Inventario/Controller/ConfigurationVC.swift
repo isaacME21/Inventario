@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import Firebase
+import SVProgressHUD
 
 
 
@@ -20,9 +21,6 @@ class ConfigurationVC:UIViewController,UIImagePickerControllerDelegate,UINavigat
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let imagePicker = UIImagePickerController()
     let db = Firestore.firestore()
-    
-    
-    //let MyDatabase = Database.database().reference()
     
     
     
@@ -107,27 +105,10 @@ class ConfigurationVC:UIViewController,UIImagePickerControllerDelegate,UINavigat
         UserDefaults.standard.set(Titulo.text ?? "", forKey: "Titulo")
         UserDefaults.standard.set(Footer.text ?? "", forKey: "Footer")
         print("Se guardo Exitosamente")
+        SVProgressHUD.showSuccess(withStatus: "Completado")
         
-        
-        //        db.collection("\(String(describing: Auth.auth().currentUser!.email!))").document("Configuracion").setData([
-        //            "Titulo" : Titulo.text ?? "",
-        //            "Footer": Footer.text ?? "",
-        //            "Image" : MainImage.image?.jpegData(compressionQuality: 0.25) ?? ""] )
-        //        { err in
-        //                if let err = err {
-        //                    print("Error writing document: \(err)")
-        //                } else {
-        //                    print("Document successfully written!")
-        //                }
-        //        }
 
-        
-        
-//        MyDatabase.child("\(String(describing: Auth.auth().currentUser!.uid))").child("Configuracion").setValue([
-//            "Titulo" : Titulo.text ?? "",
-//            "Footer": Footer.text ?? ""])
-//            "Image" : MainImage.image?.jpegData(compressionQuality: 0.25) ?? ""])
-        
+ 
     }
     
     
