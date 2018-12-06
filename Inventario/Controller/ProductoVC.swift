@@ -16,6 +16,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tabla: UITableView!
     
+    @IBOutlet weak var scroll: UIScrollView!
     
     
     @IBOutlet weak var referencia: UITextField!
@@ -100,6 +101,13 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         rightSwipe.direction = UISwipeGestureRecognizer.Direction.right
         self.view.addGestureRecognizer(rightSwipe)
         
+        ///MARK: Observadores para ajustar teclado
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        
+        scroll.keyboardDismissMode = .onDrag
+        
         
     }
     
@@ -113,10 +121,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     
     
     
-    
-    
-    
-    
+
 
     
     //BOTONES
@@ -271,15 +276,20 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     
     
     
-    //MARK: QUITAR TECLADO
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
+    //MARK: Ajustar Teclado
+    @objc func adjustForKeyboard(notification: Notification) {
+        let userInfo = notification.userInfo!
         
-        return true
+        let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+        
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            scroll.contentInset = UIEdgeInsets.zero
+        } else {
+            scroll.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height, right: 0)
+        }
+        
+        scroll.scrollIndicatorInsets = scroll.contentInset
     }
     
     
@@ -320,6 +330,9 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
             guard let imageTemp = barcode.generadorDeCodigosDeBarra(Referencia: referencia.text!, op: opcion) else {fatalError("Barcode Error")}
             codigoDeBarras.image = imageTemp
         }
+        
+        //Nota: verificar los signos al generar el codigo de barras
+        
     }
  
 

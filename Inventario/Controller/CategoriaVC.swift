@@ -11,7 +11,9 @@ import SideMenu
 import Firebase
 import SVProgressHUD
 
-class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    
     
     
 
@@ -21,16 +23,19 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     @IBOutlet weak var imagen: UIImageView!
     @IBOutlet weak var tabla: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var scroll: UIScrollView!
     
     
     let db = Firestore.firestore()
     let imagePicker = UIImagePickerController()
+    let picker = UIPickerView()
     
     //MARK: VARIABLES PARA UISERACHBAR
     var dataFiltered = [String]()
     var categorias = [String]()
     var isSearching = false
     
+    @IBOutlet weak var saveButton: UIButton!
     
     
     override func viewDidLoad() {
@@ -43,13 +48,28 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         searchBar.delegate = self
         searchBar.returnKeyType = UIReturnKeyType.done
         
+        saveButton.isUserInteractionEnabled = false
+        saveButton.alpha = 0.5
+        
         
         let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(SwipeAction(swipe:)))
         leftSwipe.direction = UISwipeGestureRecognizer.Direction.left
         self.view.addGestureRecognizer(leftSwipe)
         
-        //loadFireStoreData()
+        ///MARK: Observadores para ajustar teclado
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         
+        scroll.keyboardDismissMode = .onDrag
+        
+        
+        //PickerView Categorias
+        picker.delegate = self
+        categoria.inputView = picker
+        
+        //MARK: INICIALIZACION DE VALIDACION
+        nombre.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: UIControl.Event.allEditingEvents)
         
     }
     
@@ -60,17 +80,26 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         }
     }
     
-    
-    //MARK: Quitar teclado
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
+    override func viewWillDisappear(_ animated: Bool) {
+        categorias.removeAll()
     }
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
+    //MARK: Ajustar Teclado
+    @objc func adjustForKeyboard(notification: Notification) {
+        let userInfo = notification.userInfo!
         
-        return true
+        let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+        
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            scroll.contentInset = UIEdgeInsets.zero
+        } else {
+            scroll.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height, right: 0)
+        }
+        
+        scroll.scrollIndicatorInsets = scroll.contentInset
     }
+    
     
     
     
@@ -123,6 +152,28 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         }
     }
     
+    
+    
+    
+    // MARK: UIPickerView Delegation
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView( _ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return categorias.count
+    }
+    
+    func pickerView( _ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return categorias[row]
+    }
+    
+    func pickerView( _ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        categoria.text = categorias[row]
+    }
+    
+
     
     
     
@@ -217,8 +268,25 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         dismiss(animated: true, completion: nil)
     }
     
+    @IBAction func BorrarCategorias(_ sender: UIButton) {
+        categoria.text?.removeAll()
+    }
     
     
+    
+    //MARK: Validacion
+    
+    @objc func textFieldDidChange(textField: UITextField) {
+        
+        if nombre.text?.isEmpty == false{
+            saveButton.isUserInteractionEnabled = true
+            saveButton.alpha = 1
+        } else {
+            saveButton.isUserInteractionEnabled = false
+            saveButton.alpha = 0.5
+        }
+        
+    }
     
     
     
@@ -240,15 +308,47 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
                     print("Error writing document: \(err)")
                 } else {
                     print("Document successfully written!")
-                    self.categorias.append(self.nombre.text!)
                     self.nombre.text?.removeAll()
-                    self.categoria.text?.removeAll()
-                    self.imagen.image = UIImage(named: "MarcoFotoBlack")
                     self.tabla.reloadData()
                 }
             }
 
         }
+        
+        if categoria.text?.isEmpty == false {
+            db.collection("\(String(describing: Auth.auth().currentUser!.email!))").document("Inventario").collection("Categorias").document(nombre.text!).setData([
+                "Categoria": categoria.text!])
+            { err in
+                if let err = err {
+                    print("Error writing document: \(err)")
+                } else {
+                    print("Document successfully written!")
+                    self.categorias.append(self.nombre.text!)
+                    self.categoria.text?.removeAll()
+                    self.tabla.reloadData()
+                }
+            }
+            
+        }
+        
+        if imagen.image != UIImage(named: "MarcoFotoBlack") {
+            db.collection("\(String(describing: Auth.auth().currentUser!.email!))").document("Inventario").collection("Categorias").document(nombre.text!).setData([
+                "Imagen" : imagen.image!.jpegData(compressionQuality: 0.25)!])
+            { err in
+                if let err = err {
+                    print("Error writing document: \(err)")
+                } else {
+                    print("Document successfully written!")
+                    self.imagen.image = UIImage(named: "MarcoFotoBlack")
+                    self.tabla.reloadData()
+                }
+            }
+            
+        }
+        
+        
+        
+        
         
     }
     
@@ -284,7 +384,7 @@ extension UIViewController {
         
         switch swipe.direction.rawValue {
         case 1:
-            performSegue(withIdentifier: "gotoLeft", sender: self)
+            dismiss(animated: true, completion: nil)
         case 2:
             performSegue(withIdentifier: "gotoRight", sender: self)
             

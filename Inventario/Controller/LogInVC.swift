@@ -15,27 +15,41 @@ class LogInVC: UIViewController {
     @IBOutlet weak var Image: UIImageView!
     @IBOutlet weak var Correo: UITextField!
     @IBOutlet weak var Contraseña: UITextField!
+    @IBOutlet weak var scroll: UIScrollView!
+    @IBOutlet weak var vista: UIView!
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-    }
-    
-
-    
-    
-    //MARK: Quitar teclado
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
         
-        return true
+
+        //MARK: Observadores para ajustar teclado
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        
+        scroll.keyboardDismissMode = .onDrag
+
     }
+    
+    //MARK: Ajustar Teclado
+    @objc func adjustForKeyboard(notification: Notification) {
+        let userInfo = notification.userInfo!
+        
+        let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+        
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            scroll.contentInset = UIEdgeInsets.zero
+        } else {
+            scroll.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height, right: 0)
+        }
+        
+        scroll.scrollIndicatorInsets = scroll.contentInset
+    }
+    
+    
     
     
     //MARK: Cargar la foto de configuracion
