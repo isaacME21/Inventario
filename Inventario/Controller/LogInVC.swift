@@ -9,66 +9,99 @@
 import UIKit
 import Firebase
 import SVProgressHUD
+import Parse
 
 class LogInVC: UIViewController {
 
     @IBOutlet weak var Image: UIImageView!
-    @IBOutlet weak var Correo: UITextField!
-    @IBOutlet weak var Contraseña: UITextField!
-    @IBOutlet weak var scroll: UIScrollView!
-    @IBOutlet weak var vista: UIView!
+    @IBOutlet weak var Titulo: UILabel!
+    @IBOutlet weak var Footer: UILabel!
     
+    var email : UITextField?
+    var password : UITextField?
+    
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-
-        //MARK: Observadores para ajustar teclado
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-        
-        scroll.keyboardDismissMode = .onDrag
-
     }
     
-    //MARK: Ajustar Teclado
-    @objc func adjustForKeyboard(notification: Notification) {
-        let userInfo = notification.userInfo!
+    //MARK: VIEWDIDAPPEAR PARA CARGAR LA INFORMACION GUARDADA EN CONFIGURACION
+    override func viewDidAppear(_ animated: Bool) {
+        print("ViewDidAppear")
         
-        let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
-        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
-        
-        if notification.name == UIResponder.keyboardWillHideNotification {
-            scroll.contentInset = UIEdgeInsets.zero
-        } else {
-            scroll.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height, right: 0)
+        SVProgressHUD.show(withStatus: "Cargando")
+        DispatchQueue.global(qos: .background).async {
+            self.loadUserDefaults()
         }
         
-        scroll.scrollIndicatorInsets = scroll.contentInset
+    }
+    
+    //MARK: METODO PARA CARGAR INFORMACION DESDE PLIST
+    func loadUserDefaults()  {
+        if let tituloTemp = UserDefaults.standard.object(forKey: "Titulo") {
+            DispatchQueue.main.async {
+                self.Titulo.text = (tituloTemp as! String)
+            }
+        }
+        if let footerTemp = UserDefaults.standard.object(forKey: "Footer")  {
+            DispatchQueue.main.async {
+                self.Footer.text = (footerTemp as! String)
+            }
+            
+        }
+        if let imageTemp = UserDefaults.standard.object(forKey: "Image")  {
+            DispatchQueue.main.async {
+                self.Image.image = UIImage(data: imageTemp as! Data)
+            }
+        }
+        SVProgressHUD.dismiss()
     }
     
     
-    
-    
-    //MARK: Cargar la foto de configuracion
-    override func viewDidAppear(_ animated: Bool) {
-        let imageTemp = UserDefaults.standard.object(forKey: "Image")
-        Image.image = UIImage(data: imageTemp as! Data)
-    }
     
     
     
     //MARK: Metodo de firebase para el LogIn
     @IBAction func logIn(_ sender: UIButton) {
-        let correoTemp = Correo.text
-        let contraseñaTemp = Contraseña.text
         
-        SVProgressHUD.show(withStatus: "Cargando")
-        DispatchQueue.global(qos: .background).async {
-            
-            Auth.auth().signIn(withEmail: correoTemp! , password: contraseñaTemp!) { (DataResult, error) in
+        let alert = UIAlertController(title: "Ingresa Tus Credenciales", message: nil, preferredStyle: .alert)
+        alert.addTextField(configurationHandler: email)
+        alert.addTextField(configurationHandler: password)
+        
+        let OKAction = UIAlertAction(title: "Sign In", style: .default, handler: self.logIn)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(OKAction)
+        alert.addAction(cancelAction)
+        
+        self.present(alert, animated: true)
+        
+
+    }
+    
+    
+    //MARK: INICIALIZACION DE TEXTFIELDS EN ALERTS
+    func email (textField: UITextField) {
+        email = textField
+        email?.placeholder = "User"
+    }
+    func password(textField: UITextField) {
+        password = textField
+        password?.placeholder = "Cotraseña"
+        password?.isSecureTextEntry = true
+    }
+    
+    
+    //MARK: METODO FIREBASE LOG IN
+    func logIn(alert: UIAlertAction) {
+        
+        let UserNameTemp = email!.text
+        let contraseñaTemp = password!.text
+        DispatchQueue.global().async {
+            SVProgressHUD.show()
+            Auth.auth().signIn(withEmail: UserNameTemp!, password: contraseñaTemp!) { (DataResult, error) in
                 
                 if error != nil{
                     print(error!)
@@ -77,21 +110,32 @@ class LogInVC: UIViewController {
                     alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
                     
                     DispatchQueue.main.async {
+                        SVProgressHUD.dismiss()
                         self.present(alert, animated: true)
                     }
                     
                 }
                 else{
                     //Logeo exitoso
+                    let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
+                    changeRequest?.displayName = "ADMIN"
+                    changeRequest?.commitChanges { (error) in
+                        if let err = error {
+                            print("DisplayName no se cambio: \(err)")
+                        } else {
+                            print("DisplayName se cambio")
+                        }
+                    }
                     SVProgressHUD.dismiss()
                     self.performSegue(withIdentifier: "gotoMain", sender: self)
                 }
             }
-
         }
-
+        
     }
+        
     
+
     
     
 

@@ -10,6 +10,7 @@ import UIKit
 import SideMenu
 import Firebase
 import SVProgressHUD
+import Parse
 
 class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
@@ -23,20 +24,32 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     @IBOutlet weak var imagen: UIImageView!
     @IBOutlet weak var tabla: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
-    @IBOutlet weak var scroll: UIScrollView!
     
     
     let db = Firestore.firestore()
+    //let firebaseMethods = FirebaseMethods()
+    
     let imagePicker = UIImagePickerController()
     let picker = UIPickerView()
     
     //MARK: VARIABLES PARA UISERACHBAR
     var dataFiltered = [String]()
-    var categorias = [String]()
     var isSearching = false
+    var categorias = [String]()
+    var categoriasInfo = [String : NSDictionary]()
+    
     
     @IBOutlet weak var saveButton: UIButton!
     
+    
+    //MARK: REFRESH CONTROL
+    lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action:#selector(CategoriaVC.handleRefresh(_:)), for: UIControl.Event.valueChanged)
+        refreshControl.tintColor = UIColor.blue
+        
+        return refreshControl
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,13 +69,6 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         leftSwipe.direction = UISwipeGestureRecognizer.Direction.left
         self.view.addGestureRecognizer(leftSwipe)
         
-        ///MARK: Observadores para ajustar teclado
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-        
-        scroll.keyboardDismissMode = .onDrag
-        
         
         //PickerView Categorias
         picker.delegate = self
@@ -70,6 +76,12 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         
         //MARK: INICIALIZACION DE VALIDACION
         nombre.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: UIControl.Event.allEditingEvents)
+        
+        
+        nombre.layer.borderColor = UIColor.red.cgColor
+        nombre.layer.borderWidth = 1
+        
+        self.tabla.addSubview(self.refreshControl)
         
     }
     
@@ -80,29 +92,24 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         }
     }
     
+    //TODO: - HANDLE REFRESH
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+        categorias.removeAll()
+        categoriasInfo.removeAll()
+        self.loadFireStoreData()
+        refreshControl.endRefreshing()
+    }
+    
+    
+    
+    
+    
+    
     override func viewWillDisappear(_ animated: Bool) {
         categorias.removeAll()
     }
     
-    //MARK: Ajustar Teclado
-    @objc func adjustForKeyboard(notification: Notification) {
-        let userInfo = notification.userInfo!
-        
-        let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
-        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
-        
-        if notification.name == UIResponder.keyboardWillHideNotification {
-            scroll.contentInset = UIEdgeInsets.zero
-        } else {
-            scroll.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height, right: 0)
-        }
-        
-        scroll.scrollIndicatorInsets = scroll.contentInset
-    }
-    
-    
-    
-    
+
     
     //MARK: TABLA DE CATEGORIAS
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -113,9 +120,6 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         
         return categorias.count
     }
-    
-    
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
@@ -133,9 +137,24 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         return cell
     }
     
-    
+    //MOSTRAR INFORMACION AL TOCAR UNA CELDA
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        nombre.text = categorias[indexPath.row]
+        let cat = categorias[indexPath.row]
+        
+        if let infoCat = categoriasInfo[cat] {
+            nombre.text = cat
+            categoria.text = infoCat["Categoria"] as? String
+            if let catImage = infoCat["Imagen"] {
+                imagen.image = UIImage(data: catImage as! Data)
+            }
+        }else{
+            let alert = UIAlertController(title: "No existe la categoria", message: nil, preferredStyle: .alert)
+            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(OKAction)
+            
+            self.present(alert, animated: true)
+        }
+        validar()
     }
     
     //MARK: BUSQUEDA DE CATEGORIAS
@@ -191,7 +210,6 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         imagePicker.dismiss(animated: true, completion: nil)
     }
     
-    
     func openCamera(){
         
         if (UIImagePickerController .isSourceTypeAvailable(UIImagePickerController.SourceType.camera)){
@@ -206,9 +224,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
             self.present(alert, animated: true, completion: nil)
         }
     }
-    
-    
-    
+
     func openGallary(){
         
         imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
@@ -259,10 +275,28 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         imagen.image = UIImage(named: "MarcoFotoBlack")
     }
     
+    
+    
     @IBAction func BorrarCategoria(_ sender: UIBarButtonItem) {
-        nombre.text?.removeAll()
-        categoria.text?.removeAll()
+        
+        if nombre.text?.isEmpty == false {
+            deleteFireStoreData(Documento: nombre.text!)
+            saveButton.isUserInteractionEnabled = false
+            saveButton.alpha = 0.5
+            categorias.removeAll()
+            categoriasInfo.removeAll()
+            nombre.text?.removeAll()
+            categoria.text?.removeAll()
+            imagen.image = UIImage(named: "MarcoFotoBlack")
+            loadFireStoreData()
+            nombre.layer.borderColor = UIColor.red.cgColor
+            nombre.layer.borderWidth = 1
+            
+            
+        } else{return}
     }
+    
+    
     
     @IBAction func Salir(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
@@ -277,13 +311,22 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     //MARK: Validacion
     
     @objc func textFieldDidChange(textField: UITextField) {
+       validar()
+    }
+    
+    func validar()  {
+        
+        nombre.layer.borderColor = UIColor.red.cgColor
+        nombre.layer.borderWidth = 1
         
         if nombre.text?.isEmpty == false{
             saveButton.isUserInteractionEnabled = true
             saveButton.alpha = 1
+            nombre.layer.borderWidth = 0
         } else {
             saveButton.isUserInteractionEnabled = false
             saveButton.alpha = 0.5
+            nombre.layer.borderColor = UIColor.red.cgColor
         }
         
     }
@@ -295,11 +338,22 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     
     
     
-    //MARK: Firebase Methods
     @IBAction func Save(_ sender: UIButton) {
-        
+        saveFireStoreData()
+        categorias.removeAll()
+        categoriasInfo.removeAll()
+        loadFireStoreData()
+        nombre.layer.borderColor = UIColor.red.cgColor
+        nombre.layer.borderWidth = 1
+        saveButton.isUserInteractionEnabled = false
+        saveButton.alpha = 0.5
+    }
+    
+    
+    //MARK: Firebase Methods
+    func saveFireStoreData()  {
         if nombre.text?.isEmpty == false {
-            db.collection("\(String(describing: Auth.auth().currentUser!.email!))").document("Inventario").collection("Categorias").document(nombre.text!).setData([
+            db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").document(nombre.text!).setData([
                 "Nombre" : nombre.text ?? "",
                 "Categoria": categoria.text ?? "",
                 "Imagen" : imagen.image?.jpegData(compressionQuality: 0.25) ?? ""] )
@@ -312,18 +366,18 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
                     self.tabla.reloadData()
                 }
             }
-
+            
         }
         
         if categoria.text?.isEmpty == false {
-            db.collection("\(String(describing: Auth.auth().currentUser!.email!))").document("Inventario").collection("Categorias").document(nombre.text!).setData([
+            db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").document(nombre.text!).setData([
                 "Categoria": categoria.text!])
             { err in
                 if let err = err {
                     print("Error writing document: \(err)")
                 } else {
                     print("Document successfully written!")
-                    self.categorias.append(self.nombre.text!)
+                    
                     self.categoria.text?.removeAll()
                     self.tabla.reloadData()
                 }
@@ -332,7 +386,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         }
         
         if imagen.image != UIImage(named: "MarcoFotoBlack") {
-            db.collection("\(String(describing: Auth.auth().currentUser!.email!))").document("Inventario").collection("Categorias").document(nombre.text!).setData([
+            db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").document(nombre.text!).setData([
                 "Imagen" : imagen.image!.jpegData(compressionQuality: 0.25)!])
             { err in
                 if let err = err {
@@ -346,31 +400,38 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
             
         }
         
-        
-        
-        
-        
     }
-    
-    
+
+
     func loadFireStoreData()  {
-        
-        db.collection("\(String(describing: Auth.auth().currentUser!.email!))").document("Inventario").collection("Categorias").getDocuments { (QuerySnapshot, err) in
+
+        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").getDocuments { (QuerySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
-                    print("\(document.documentID) => \(document.data())")
+                    //print("\(document.documentID) => \(document.data())")
                     self.categorias.append(document.documentID)
+                    self.categoriasInfo[document.documentID] = document.data() as NSDictionary
                     print(self.categorias)
                 }
                 self.tabla.reloadData()
                 SVProgressHUD.dismiss()
-                
-                
             }
         }
     }
+
+
+    func deleteFireStoreData(Documento : String)  {
+        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").document(Documento).delete { (err) in
+            if let err = err {
+                print("Error removing document: \(err)")
+            } else {
+                print("Document successfully removed!")
+            }
+        }
+    }
+    
     
 }
 
@@ -384,7 +445,7 @@ extension UIViewController {
         
         switch swipe.direction.rawValue {
         case 1:
-            dismiss(animated: true, completion: nil)
+            navigationController?.popToRootViewController(animated: true)
         case 2:
             performSegue(withIdentifier: "gotoRight", sender: self)
             

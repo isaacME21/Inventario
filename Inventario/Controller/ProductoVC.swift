@@ -9,14 +9,13 @@
 import UIKit
 import Firebase
 import SVProgressHUD
+import Parse
 
-class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate{
+class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIPickerViewDelegate, UIPickerViewDataSource{
 
     @IBOutlet weak var pageControl: UIPageControl!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tabla: UITableView!
-    
-    @IBOutlet weak var scroll: UIScrollView!
     
     
     @IBOutlet weak var referencia: UITextField!
@@ -40,9 +39,24 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     
     @IBOutlet weak var saveButton: UIButton!
     
+    
+    
+    
     let db = Firestore.firestore()
     let imagePicker = UIImagePickerController()
     var barcode = CodigosDeBarras()
+    
+    //MARK: INICIALIZACION DE PICKERVIEWS
+    let catPicker = UIPickerView()
+    let proovedorPicker = UIPickerView()
+    let taxPicker = UIPickerView()
+    
+    //MARK: ARRAYS DE PRUEBA
+    var categoriasArray = [String]()
+    var proovedoresArray = [String]()
+    let impuestosArray = ["10","16","20"]
+    var itemInfo = [String : NSDictionary]()
+    
     
     //MARK: VARIABLES PARA UISERACHBAR
     var dataFiltered = [String]()
@@ -50,13 +64,24 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     var items = [String]()
     
     
+    let errorColor = UIColor.red
     
-    
+    //MARK: REFRESH CONTROL
+    lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action:#selector(ProductoVC.handleRefresh(_:)), for: UIControl.Event.valueChanged)
+        refreshControl.tintColor = UIColor.blue
+        
+        return refreshControl
+    }()
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        borderTextFields1()
+        colorTextFields()
         
         
         referencia.delegate = self
@@ -88,6 +113,17 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         switchQR.isUserInteractionEnabled = false
         switchQR.alpha = 0.5
         
+        //MARK: INICIALIZAR LOS TEXTFIELDS CON UIPICKERVIEW
+        categoria.inputView = catPicker
+        proovedores.inputView = proovedorPicker
+        impuestos.inputView = taxPicker
+        
+        //MARK: DELEGATE A PICKERVIEWS
+        catPicker.delegate = self
+        proovedorPicker.delegate = self
+        taxPicker.delegate = self
+        
+        
         
         pageControl.currentPage = 1
         
@@ -101,12 +137,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         rightSwipe.direction = UISwipeGestureRecognizer.Direction.right
         self.view.addGestureRecognizer(rightSwipe)
         
-        ///MARK: Observadores para ajustar teclado
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-        
-        scroll.keyboardDismissMode = .onDrag
+        self.tabla.addSubview(self.refreshControl)
         
         
     }
@@ -118,18 +149,69 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         }
     }
     
-    
-    
-    
-
-
-    
-    //BOTONES
-    
-    @IBAction func addProduct(_ sender: UIBarButtonItem) {
+    //TODO: - HANDLE REFRESH
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+        items.removeAll()
+        itemInfo.removeAll()
+        categoriasArray.removeAll()
+        proovedoresArray.removeAll()
+        self.loadFireStoreData()
+        refreshControl.endRefreshing()
     }
     
     
+    // MARK: UIPickerView Delegation
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    func pickerView( _ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        
+        if pickerView == catPicker{
+            return categoriasArray.count
+        }else if pickerView == proovedorPicker {
+            return proovedoresArray.count
+        }else if pickerView == taxPicker{
+            return impuestosArray.count
+        }
+        
+        return 1
+    }
+    func pickerView( _ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        
+        
+        if pickerView == catPicker{
+            return categoriasArray[row]
+        }else if pickerView == proovedorPicker {
+            return proovedoresArray[row]
+        }else if pickerView == taxPicker{
+            return impuestosArray[row]
+        }
+        
+        return nil
+    }
+    func pickerView( _ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+
+        if pickerView == catPicker{
+            categoria.text = categoriasArray[row]
+        }else if pickerView == proovedorPicker {
+            proovedores.text = proovedoresArray[row]
+        }else if pickerView == taxPicker{
+            impuestos.text = impuestosArray[row]
+        }
+        validar()
+    }
+    
+    
+    
+    
+    //BOTONES
+    @IBAction func addProduct(_ sender: UIBarButtonItem) {
+        deleteTextfields()
+        borderTextFields1()
+        colorTextFields()
+        saveButton.isUserInteractionEnabled = false
+        saveButton.alpha = 0.5
+    }
     @IBAction func cameraTapped(_ sender: UIButton) {
         let alert = UIAlertController(title: "Escoge una Imagen", message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = UIColor(red:0.82, green:0.64, blue:0.32, alpha:1.0)
@@ -157,14 +239,37 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         
         present(alert, animated: true, completion: nil)
     }
-    
-    
-    @IBAction func DeleteAll(_ sender: UIButton) {
+    @IBAction func DeleteImagen(_ sender: UIButton) {
+        image.image = UIImage(named: "MarcoFotoBlack")
     }
+    @IBAction func deleteProducto(_ sender: UIBarButtonItem) {
+        if nombre.text?.isEmpty == false {
+            deleteFireStoreData(Documento: nombre.text!)
+            saveButton.isUserInteractionEnabled = false
+            saveButton.alpha = 0.5
+            deleteTextfields()
+            items.removeAll()
+            itemInfo.removeAll()
+            categoriasArray.removeAll()
+            proovedoresArray.removeAll()
+            loadFireStoreData()
+            borderTextFields1()
+            colorTextFields()
+        }
     
-    
+        
+        
+    }
     @IBAction func save(_ sender: UIButton) {
         save()
+        deleteTextfields()
+        items.removeAll()
+        itemInfo.removeAll()
+        categoriasArray.removeAll()
+        proovedoresArray.removeAll()
+        loadFireStoreData()
+        borderTextFields1()
+        colorTextFields()
     }
     
 
@@ -176,12 +281,8 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         if isSearching {
             return dataFiltered.count
         }
-        
         return items.count
     }
-    
-    
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
@@ -198,11 +299,35 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         
         return cell
     }
-    
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        nombre.text = items[indexPath.row]
+        
+        let producto = items[indexPath.row]
+        if let infoItem = itemInfo[producto] {
+            if let itemImage = infoItem["Imagen"]{ image.image = UIImage(data: itemImage as! Data) }
+            nombre.text = infoItem["Nombre"] as? String
+            atributos.text = infoItem["Atributos"] as? String
+            beneficoBruto.text = infoItem["BeneficioBruto"] as? String
+            categoria.text = infoItem["Categoria"] as? String
+            impuestos.text = infoItem["Impuestos"] as? String
+            margen.text = infoItem["Margen"] as? String
+            PrecioDeCompra.text = infoItem["Precio de Compra"] as? String
+            precioDeVenta.text = infoItem["Precio de Venta"] as? String
+            proovedores.text = infoItem["Proovedores"] as? String
+            referencia.text = infoItem["Referencia"] as? String
+            validar()
+        }else {
+            let alert = UIAlertController(title: "No existe el producto", message: nil, preferredStyle: .alert)
+            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(OKAction)
+            
+            self.present(alert, animated: true)
+        }
+        
+        
+        
     }
+    
+    
     
     //MARK: BUSQUEDA DE ARTICULOS
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -217,16 +342,6 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
             tabla.reloadData()
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     //MARK: Funciones importantes
     //MARK: Metodo Importante
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -240,8 +355,6 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         
         imagePicker.dismiss(animated: true, completion: nil)
     }
-    
-    
     func openCamera(){
         
         if (UIImagePickerController .isSourceTypeAvailable(UIImagePickerController.SourceType.camera)){
@@ -256,9 +369,6 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
             self.present(alert, animated: true, completion: nil)
         }
     }
-    
-    
-    
     func openGallary(){
         
         imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
@@ -267,39 +377,49 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //MARK: Ajustar Teclado
-    @objc func adjustForKeyboard(notification: Notification) {
-        let userInfo = notification.userInfo!
+    //MARK: PERMITIR ENTRADA SOLAMENTE DE NUMEROS O LETRAS
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
-        let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
-        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
-        
-        if notification.name == UIResponder.keyboardWillHideNotification {
-            scroll.contentInset = UIEdgeInsets.zero
-        } else {
-            scroll.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height, right: 0)
+        if textField == nombre {
+            let caracteresPermitidos = CharacterSet.init(charactersIn: "abcdefghijklmnopqrstuvwxyz1234567890.,- ")
+            let characterSet = CharacterSet(charactersIn: string)
+            return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
-        scroll.scrollIndicatorInsets = scroll.contentInset
+        if textField == atributos{
+            let caracteresPermitidos = CharacterSet.init(charactersIn: "abcdefghijklmnopqrstuvwxyz1234567890.,- ")
+            let characterSet = CharacterSet(charactersIn: string)
+            return caracteresPermitidos.isSuperset(of: characterSet)
+        }
+       
+        let caracteresPermitidos = CharacterSet.decimalDigits
+        let characterSet = CharacterSet(charactersIn: string)
+        return caracteresPermitidos.isSuperset(of: characterSet)
+    
     }
     
+
     
     
     //MARK: VALIDACION
-    
     @objc func textFieldDidChange(textField: UITextField) {
+        validar()
         
-        var opcion:Int = 2
+    }
+    //TODO: - VALIDACION
+    func validar()  {
+        saveButton.isUserInteractionEnabled = false
+        saveButton.alpha = 0.5
+        switchPDF417.isUserInteractionEnabled = false
+        switchPDF417.alpha = 0.5
+        switchQR.isUserInteractionEnabled = false
+        switchQR.alpha = 0.5
+        colorTextFields()
+        borderTextFields1()
+        
         var listo = 0
+        var opcion:Int = 2
+        
         let textfields:[UITextField] = [referencia,nombre,categoria,atributos,impuestos,precioDeVenta,PrecioDeCompra,beneficoBruto,margen,proovedores]
         for x in textfields {
             if !((x.text?.isEmpty)!){
@@ -311,17 +431,68 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         if switchQR.isOn{ opcion = 3 }
         if switchPDF417.isOn { opcion = 1 }
         
+        if (nombre.text?.isEmpty)! {
+            nombre.layer.borderColor = errorColor.cgColor
+        }else{
+            nombre.layer.borderWidth = 0
+        }
         
+        if (categoria.text?.isEmpty)! {
+            categoria.layer.borderColor = errorColor.cgColor
+        }else {
+            categoria.layer.borderWidth = 0
+        }
+        
+        if (atributos.text?.isEmpty)! {
+            atributos.layer.borderColor = errorColor.cgColor
+        }else{
+            atributos.layer.borderWidth = 0
+        }
+        
+        if (impuestos.text?.isEmpty)! {
+            impuestos.layer.borderColor = errorColor.cgColor
+        }else{
+            impuestos.layer.borderWidth = 0
+        }
+        
+        if (precioDeVenta.text?.isEmpty)!{
+            precioDeVenta.layer.borderColor = errorColor.cgColor
+        }else{
+            precioDeVenta.layer.borderWidth = 0
+        }
+       
+        if (beneficoBruto.text?.isEmpty)! {
+            beneficoBruto.layer.borderColor = errorColor.cgColor
+        }else{
+            beneficoBruto.layer.borderWidth = 0
+        }
+        
+        if (margen.text?.isEmpty)! {
+            margen.layer.borderColor = errorColor.cgColor
+        }else{
+            margen.layer.borderWidth = 0
+        }
+        
+        if (proovedores.text?.isEmpty)! {
+            proovedores.layer.borderColor = errorColor.cgColor
+        }else{
+            proovedores.layer.borderWidth = 0
+        }
+        
+        
+        
+        if (PrecioDeCompra.text?.isEmpty)!{
+            PrecioDeCompra.layer.borderColor = errorColor.cgColor
+        }else {
+            precioDeVenta.text = "\(precioVenta())"
+            beneficoBruto.text = "\(margenBruto())"
+            margen.text = "\(porcentajeBruto())"
+            PrecioDeCompra.layer.borderWidth = 0
+        }
         
         
         if (referencia.text?.isEmpty)! {
-            switchPDF417.isUserInteractionEnabled = false
-            switchPDF417.alpha = 0.5
-            switchQR.isUserInteractionEnabled = false
-            switchQR.alpha = 0.5
-        }else if listo == 10{
-            saveButton.isUserInteractionEnabled = true
-            saveButton.alpha = 1
+            referencia.layer.borderColor = errorColor.cgColor
         }else{
             switchPDF417.isUserInteractionEnabled = true
             switchPDF417.alpha = 1.0
@@ -329,44 +500,106 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
             switchQR.alpha = 1.0
             guard let imageTemp = barcode.generadorDeCodigosDeBarra(Referencia: referencia.text!, op: opcion) else {fatalError("Barcode Error")}
             codigoDeBarras.image = imageTemp
+            referencia.layer.borderWidth = 0
         }
         
-        //Nota: verificar los signos al generar el codigo de barras
-        
+        if listo == 10{
+            saveButton.isUserInteractionEnabled = true
+            saveButton.alpha = 1
+        }
+            
     }
- 
-
     @IBAction func PDF417On(_ sender: UISwitch) {
         switchQR.setOn(false, animated: true)
         guard let imageTemp = barcode.generadorDeCodigosDeBarra(Referencia: referencia.text!, op: 1) else {fatalError("Barcode Error")}
         codigoDeBarras.image = imageTemp
     }
     
+    
     @IBAction func codeQROn(_ sender: UISwitch) {
         switchPDF417.setOn(false, animated: true)
         guard let imageTemp = barcode.generadorDeCodigosDeBarra(Referencia: referencia.text!, op: 3) else {fatalError("Barcode Error")}
         codigoDeBarras.image = imageTemp
     }
-   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    //MARK: CALCULAR PRECIO DE VENTA, MARGEN BRUTO Y PORCENTAJE BRUTO
+    func precioVenta() -> Double{
+        let compra = (PrecioDeCompra.text! as NSString).doubleValue
+        let x = compra * 4.7
+        let Venta = Double(round(1000*x)/1000)
+        return Venta
+    }
+    func margenBruto() -> Double{
+        let compra = (PrecioDeCompra.text! as NSString).doubleValue
+        let venta = compra * 4.7
+        let x = venta - compra
+        let margenBruto = Double(round(1000*x)/1000)
+        return margenBruto
+    }
+    func porcentajeBruto() -> Double{
+        let compra = (PrecioDeCompra.text! as NSString).doubleValue
+        let venta = compra * 4.7
+        let margenBruto = venta - compra
+        let x = margenBruto / venta
+        let porcentajeBruto = Double(round(1000*x)/1000)
+        return porcentajeBruto * 100
+    }
+    //MARK: BORRAR LOS TEXTFIELDS
+    func deleteTextfields(){
+        nombre.text?.removeAll()
+        referencia.text?.removeAll()
+        categoria.text?.removeAll()
+        atributos.text?.removeAll()
+        impuestos.text?.removeAll()
+        precioDeVenta.text?.removeAll()
+        PrecioDeCompra.text?.removeAll()
+        beneficoBruto.text?.removeAll()
+        margen.text?.removeAll()
+        proovedores.text?.removeAll()
+    }
+    //TODO: - BORDER TEXTFIELDS
+    func borderTextFields1() {
+        nombre.layer.borderWidth = 1.0
+        referencia.layer.borderWidth = 1.0
+        categoria.layer.borderWidth = 1.0
+        atributos.layer.borderWidth = 1.0
+        impuestos.layer.borderWidth = 1.0
+        precioDeVenta.layer.borderWidth = 1.0
+        PrecioDeCompra.layer.borderWidth = 1.0
+        beneficoBruto.layer.borderWidth = 1.0
+        margen.layer.borderWidth = 1.0
+        proovedores.layer.borderWidth = 1.0
+    }
+    func borderTextFields2() {
+        nombre.layer.borderWidth = 0
+        referencia.layer.borderWidth = 0
+        categoria.layer.borderWidth = 0
+        atributos.layer.borderWidth = 0
+        impuestos.layer.borderWidth = 0
+        precioDeVenta.layer.borderWidth = 0
+        PrecioDeCompra.layer.borderWidth = 0
+        beneficoBruto.layer.borderWidth = 0
+        margen.layer.borderWidth = 0
+        proovedores.layer.borderWidth = 0
+    }
+    //TODO: - COLOR TEXTFIELDS
+    func colorTextFields() {
+        nombre.layer.borderColor = errorColor.cgColor
+        referencia.layer.borderColor = errorColor.cgColor
+        categoria.layer.borderColor = errorColor.cgColor
+        atributos.layer.borderColor = errorColor.cgColor
+        impuestos.layer.borderColor = errorColor.cgColor
+        precioDeVenta.layer.borderColor = errorColor.cgColor
+        PrecioDeCompra.layer.borderColor = errorColor.cgColor
+        beneficoBruto.layer.borderColor = errorColor.cgColor
+        margen.layer.borderColor = errorColor.cgColor
+        proovedores.layer.borderColor = errorColor.cgColor
+    }
     //MARK: METODOS DE FIRESTORE
-    
     func save()  {
-        db.collection("\(String(describing: Auth.auth().currentUser!.email!))").document("Inventario").collection("Articulos").document(nombre.text!).setData([
+        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Articulos").document(nombre.text!).setData([
             "Nombre" : nombre.text!,
             "Referencia" : referencia.text!,
-            "Codigo De Barras" : codigoDeBarras.image?.jpegData(compressionQuality: 0.25) ?? "",
+            "Codigo De Barras" : codigoDeBarras.image?.jpegData(compressionQuality: 0.5) ?? "",
             "Categoria" : categoria.text!,
             "Atributos": atributos.text!,
             "Impuestos": impuestos.text!,
@@ -381,24 +614,37 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
                 print("Error writing document: \(err)")
             } else {
                 print("Document successfully written!")
-                self.items.append(self.nombre.text!)
-                self.nombre.text?.removeAll()
-                //self.tabla.reloadData()
+                self.image.image = UIImage(named: "MarcoFotoBlack")
+                self.codigoDeBarras.image = UIImage(named: "barcode")
+                self.saveButton.isUserInteractionEnabled = false
+                self.saveButton.alpha = 0.5
+                self.tabla.reloadData()
+            }
+        }
+        
+        
+        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").document(categoria.text!).setData([
+            nombre.text! : true
+        ]) { err in
+            if let err = err {
+                print("Error writing document: \(err)")
+            } else {
+                print("Document successfully written!")
             }
         }
         
     }
-    
-    
     func loadFireStoreData()  {
         
-        db.collection("\(String(describing: Auth.auth().currentUser!.email!))").document("Inventario").collection("Articulos").getDocuments { (QuerySnapshot, err) in
+        //MARK: CARGAR ARTICULOS
+        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Articulos").getDocuments { (QuerySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
                     self.items.append(document.documentID)
+                    self.itemInfo[document.documentID] = document.data() as NSDictionary
                     print(self.items)
                 }
                 self.tabla.reloadData()
@@ -407,10 +653,47 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
                 
             }
         }
+        
+        //MARK: CARGAR CATEGORIAS
+        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").getDocuments { (QuerySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in QuerySnapshot!.documents {
+                    //print("\(document.documentID) => \(document.data())")
+                    self.categoriasArray.append(document.documentID)
+                    print(self.categoriasArray)
+                }
+                self.tabla.reloadData()
+                SVProgressHUD.dismiss()
+            }
+        }
+        
+        
+        //MARK: CARGAR PROOVEDORES
+        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Proovedores").getDocuments { (QuerySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in QuerySnapshot!.documents {
+                    //print("\(document.documentID) => \(document.data())")
+                    self.proovedoresArray.append(document.documentID)
+                    print(self.categoriasArray)
+                }
+                self.tabla.reloadData()
+                SVProgressHUD.dismiss()
+            }
+        }
+        
+    }
+    func deleteFireStoreData(Documento : String)  {
+        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Articulos").document(Documento).delete { (err) in
+            if let err = err {
+                print("Error removing document: \(err)")
+            } else {
+                print("Document successfully removed!")
+            }
+        }
     }
 
-    
-    
-    
-    
 }
