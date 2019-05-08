@@ -9,7 +9,6 @@
 import UIKit
 import Firebase
 import SVProgressHUD
-import Parse
 
 class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
 
@@ -35,7 +34,7 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
     var dataFiltered = [String]()
     var items = [String]()
     var isSearching = false
-    var itemsInfo = [String : NSDictionary]()
+    var itemsInfo = [item]()
     
     var almacenes = ["Almacen 1","Almacen 2", "Almacen 3", "Almacen 4"]
     
@@ -48,6 +47,13 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
         return refreshControl
     }()
     
+    class item{
+        var name = ""
+        var precioDeCompra : String?
+        var precioDeVenta : String?
+        var proovedores : String?
+        var imagen : UIImage?
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -105,17 +111,19 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
     
     //MOSTRAR INFORMACION AL TOCAR UNA CELDA
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let item = items[indexPath.row]
+        var art : item?
+        for x in itemsInfo{if x.name == items[indexPath.row]{ art = x}}
         
-        if let infoItem = itemsInfo[item] {
-            nombre.text = item
-            proovedor.text = infoItem["Proovedores"] as? String
-            precioDeVenta.text = infoItem["Precio de Venta"] as? String
-            precioDeCompra.text = infoItem["Precio de Compra"] as? String
-            
-            if let itemImage = infoItem["Imagen"] {
-                imagen.image = UIImage(data: itemImage as! Data)
+        if art != nil {
+            if let itemImage = art?.imagen{
+                imagen.image = itemImage
+            }else{
+                imagen.image = UIImage(named: "MarcoFotoBlack")
             }
+            nombre.text = art!.name
+            precioDeCompra.text = art?.precioDeCompra ?? ""
+            precioDeVenta.text = art?.precioDeVenta ?? ""
+            proovedor.text = art?.proovedores ?? ""
         }else{
             let alert = UIAlertController(title: "No existe la categoria", message: nil, preferredStyle: .alert)
             let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -158,7 +166,10 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
     }
     
     func pickerView( _ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        almacen.text = almacenes[row]
+        if nombre.text != ""{
+            almacen.text = almacenes[row]
+        }else{ alertInput() }
+        
     }
     
     @IBAction func salir(_ sender: UIBarButtonItem) {
@@ -168,14 +179,41 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
     
     //TODO: - Cargar informacion de Firebase
     func load(Collection: String) {
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
+        db.collection("SexyRevolverData").document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
                     self.items.append(document.documentID)
-                    self.itemsInfo[document.documentID] = document.data() as NSDictionary
+                    let infoItem = document.data()
+                    let itemObj = item()
+                    itemObj.name = infoItem["Nombre"] as! String
+                    itemObj.precioDeCompra = infoItem["Precio de Compra"] as? String
+                    itemObj.precioDeVenta = infoItem["Precio de Venta"] as? String
+                    itemObj.proovedores = infoItem["Proovedores"] as? String
+                    
+                    
+                    let storageReference = Storage.storage().reference()
+                    let profileImageRef = storageReference.child("Articulos").child(document.documentID)
+                    // Fetch the download URL
+                    profileImageRef.downloadURL { url, error in
+                        if let error = error {
+                            // Handle any errors
+                            print("Error took place \(error.localizedDescription)")
+                        } else {
+                            // Get the download URL for 'images/stars.jpg'
+                            print("Profile image download URL \(String(describing: url!))")
+                            do {
+                                let imageData : NSData = try NSData(contentsOf: url!)
+                                itemObj.imagen = UIImage(data: imageData as Data)
+                                print("Se bajo la foto")
+                            } catch {
+                                print(error)
+                            }
+                        }
+                        self.itemsInfo.append(itemObj)
+                    }
                 }
                 self.tabla.reloadData()
                 SVProgressHUD.dismiss()

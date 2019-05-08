@@ -30,6 +30,7 @@
 		733B429C226FE95D00B876FB /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733B429A226FE95C00B876FB /* CustomTableViewCell.swift */; };
 		733B429D226FE95D00B876FB /* CustomTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 733B429B226FE95D00B876FB /* CustomTableViewCell.xib */; };
 		7344750A2194A4F20054AEB7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 734475092194A4F10054AEB7 /* GoogleService-Info.plist */; };
+		7347A08F22737A4500317A7B /* TraspasoEnEsperaVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7347A08E22737A4500317A7B /* TraspasoEnEsperaVC.swift */; };
 		735BCC4E2190B93100EC8710 /* CategoriaVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735BCC4D2190B93100EC8710 /* CategoriaVC.swift */; };
 		735BCC502190B95100EC8710 /* ProductoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735BCC4F2190B95100EC8710 /* ProductoVC.swift */; };
 		736BA71F218CCA1F0058CCE1 /* MenuTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736BA71E218CCA1F0058CCE1 /* MenuTVC.swift */; };
@@ -76,6 +77,7 @@
 		733B429A226FE95C00B876FB /* CustomTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		733B429B226FE95D00B876FB /* CustomTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomTableViewCell.xib; sourceTree = "<group>"; };
 		734475092194A4F10054AEB7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		7347A08E22737A4500317A7B /* TraspasoEnEsperaVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraspasoEnEsperaVC.swift; sourceTree = "<group>"; };
 		735BCC4D2190B93100EC8710 /* CategoriaVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriaVC.swift; sourceTree = "<group>"; };
 		735BCC4F2190B95100EC8710 /* ProductoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductoVC.swift; sourceTree = "<group>"; };
 		736BA71E218CCA1F0058CCE1 /* MenuTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuTVC.swift; sourceTree = "<group>"; };
@@ -196,7 +198,11 @@
 		7388234B218A237C0051D7A3 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				730FA032226F83A900A606D1 /* MenuVC.swift */,
+				730FA034226F83CB00A606D1 /* ContainerVC.swift */,
 				737296772194EE7C00832591 /* LogInVC.swift */,
+				73B6E0952263BE730073D7A2 /* DashboardVC.swift */,
+				73B6E0932263BCC90073D7A2 /* ScannArticulosVC.swift */,
 				7388234F218A2C180051D7A3 /* ConfigurationVC.swift */,
 				735BCC4D2190B93100EC8710 /* CategoriaVC.swift */,
 				735BCC4F2190B95100EC8710 /* ProductoVC.swift */,
@@ -206,10 +212,7 @@
 				7371798A21DECC1B00B05EE2 /* AlmacenVC.swift */,
 				7371798C21DECEA200B05EE2 /* CrearAlmacenVC.swift */,
 				73BCA4ED21E519310006530C /* GestionInventarioVC.swift */,
-				73B6E0932263BCC90073D7A2 /* ScannArticulosVC.swift */,
-				73B6E0952263BE730073D7A2 /* DashboardVC.swift */,
-				730FA032226F83A900A606D1 /* MenuVC.swift */,
-				730FA034226F83CB00A606D1 /* ContainerVC.swift */,
+				7347A08E22737A4500317A7B /* TraspasoEnEsperaVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -322,20 +325,14 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Inventario/Pods-Inventario-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
-				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/Parse/Parse.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
-				"${BUILT_PRODUCTS_DIR}/SideMenu/SideMenu.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
@@ -343,20 +340,14 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl_grpc.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IQKeyboardManagerSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Parse.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SideMenu.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
@@ -410,6 +401,7 @@
 				737296782194EE7C00832591 /* LogInVC.swift in Sources */,
 				7398F7E621C345CD00D1D6B4 /* ClientesVC.swift in Sources */,
 				735BCC502190B95100EC8710 /* ProductoVC.swift in Sources */,
+				7347A08F22737A4500317A7B /* TraspasoEnEsperaVC.swift in Sources */,
 				7321FD7422650D7200EA41CE /* UIAlertAction+Image.swift in Sources */,
 				7321FD722265056D00EA41CE /* UIImage+Resize.swift in Sources */,
 				733B429C226FE95D00B876FB /* CustomTableViewCell.swift in Sources */,

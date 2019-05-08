@@ -9,7 +9,6 @@
 import UIKit
 import Firebase
 import SVProgressHUD
-import Parse
 
 
 class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
@@ -25,7 +24,6 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     @IBOutlet weak var pais: UITextField!
     @IBOutlet weak var codigoPostal: UITextField!
     
-    @IBOutlet weak var image: UIImageView!
     @IBOutlet weak var saveButton: UIButton!
     
      let imagePicker = UIImagePickerController()
@@ -135,39 +133,6 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
         }
     }
     
-    //MARK: Metodo Importante
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
-        
-        if let userPickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            image.image = userPickedImage
-        }
-        
-        
-        imagePicker.dismiss(animated: true, completion: nil)
-    }
-    
-    func openCamera(){
-        
-        if (UIImagePickerController .isSourceTypeAvailable(UIImagePickerController.SourceType.camera)){
-            imagePicker.sourceType = UIImagePickerController.SourceType.camera
-            imagePicker.allowsEditing = true
-            self.present(imagePicker, animated: true, completion: nil)
-        }else{
-            let alert  = UIAlertController(title: "Advertencia", message: "No tienes Camara", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            
-            
-            self.present(alert, animated: true, completion: nil)
-        }
-    }
-    
-    func openGallary(){
-        
-        imagePicker.sourceType = UIImagePickerController.SourceType.photoLibrary
-        imagePicker.allowsEditing = true
-        self.present(imagePicker, animated: true, completion: nil)
-    }
     
     func deleteTexfields(){
         nombre.text?.removeAll()
@@ -219,7 +184,6 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
         deleteTexfields()
         saveButton.isUserInteractionEnabled = false
         saveButton.alpha = 0.5
-        image.image = UIImage(named: "MarcoFotoBlack")
         nombre.layer.borderWidth = 1.0
         nombre.layer.borderColor = UIColor.red.cgColor
         
@@ -239,7 +203,6 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
         load(Collection: "Almacenes")
         saveButton.isUserInteractionEnabled = false
         saveButton.alpha = 0.5
-        image.image = UIImage(named: "MarcoFotoBlack")
         nombre.layer.borderWidth = 1.0
         nombre.layer.borderColor = UIColor.red.cgColor
         
@@ -254,7 +217,6 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
             items.removeAll()
             itemInfo.removeAll()
             load(Collection: "Almacenes")
-            image.image = UIImage(named: "MarcoFotoBlack")
             nombre.layer.borderWidth = 1.0
             nombre.layer.borderColor = UIColor.red.cgColor
             
@@ -262,42 +224,11 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
         
     }
     
-    @IBAction func cameraTapped(_ sender: UIButton) {
-        
-        let alert = UIAlertController(title: "Escoge una Imagen", message: nil, preferredStyle: .actionSheet)
-        alert.view.tintColor = UIColor(red:0.82, green:0.64, blue:0.32, alpha:1.0)
-        
-        
-        alert.addAction(UIAlertAction(title: "Camara", style: .default, handler: { _ in
-            self.openCamera()
-        }))
-        alert.addAction(UIAlertAction(title: "Galeria", style: .default, handler: { _ in
-            self.openGallary()
-        }))
-        
-        alert.addAction(UIAlertAction.init(title: "Cancelar", style: .cancel, handler: nil))
-        
-        
-        if let popoverController = alert.popoverPresentationController {
-            
-            popoverController.sourceView = self.view
-            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-            popoverController.permittedArrowDirections = []
-            
-        }
-        
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
-    @IBAction func eliminarImagen(_ sender: UIButton) {
-        image.image = UIImage(named: "MarcoFotoBlack")
-    }
     
     
         //TODO: - Cargar informacion de Firebase
         func load(Collection: String) {
-            db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
+            db.collection("SexyRevolverData").document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
                 } else {
@@ -316,13 +247,12 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     
     //TODO: - GUARDAR EN FIREBASE
     func save(Collection : String, Document : String, Data : [String : Any]){
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection(Collection).document(Document).setData(Data)
+        db.collection("SexyRevolverData").document("Inventario").collection(Collection).document(Document).setData(Data)
         { err in
             if let err = err {
                 print("Error writing document: \(err)")
             } else {
                 print("Document successfully written!")
-                self.image.image = UIImage(named: "MarcoFotoBlack")
                 self.deleteTexfields()
                 self.saveButton.isUserInteractionEnabled = false
                 self.saveButton.alpha = 0.5
@@ -332,7 +262,7 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     
     //TODO: ELIMINAR INFORMACION DE FIREBASE
     func deleteFireStoreData(Documento : String)  {
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Almacenes").document(Documento).delete { (err) in
+        db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Documento).delete { (err) in
             if let err = err {
                 print("Error removing document: \(err)")
             } else {

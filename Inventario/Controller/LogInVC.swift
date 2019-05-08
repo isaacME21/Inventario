@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 import SVProgressHUD
-import Parse
+
 
 class LogInVC: UIViewController {
 

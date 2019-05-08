@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 import SVProgressHUD
-import Parse
+
 
 class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
@@ -36,6 +36,20 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
     
     @IBOutlet weak var saveButton: UIButton!
     
+    class proovedor{
+        var name = ""
+        var ID : String?
+        var apellido : String?
+        var email : String?
+        var telefono1 : String?
+        var telefono2 : String?
+        var direccion1 : String?
+        var direccion2 : String?
+        var ciudad : String?
+        var pais : String?
+        var CP: String?
+    }
+    
     let db = Firestore.firestore()
     
     //MARK: REFRESH CONTROL
@@ -51,7 +65,7 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
     var dataFiltered = [String]()
     var isSearching = false
     var items = [String]()
-    var itemInfo = [String : NSDictionary]()
+    var itemInfo = [proovedor]()
     
     
     
@@ -183,21 +197,21 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let proovedor = items[indexPath.row]
-            
-    
-        if let infoItem = itemInfo[proovedor]{
-            proovedorID.text = proovedor
-            nombre.text = infoItem["Nombre"] as? String
-            apellido.text = infoItem["Apellido"] as? String
-            email.text = infoItem["email"] as? String
-            telefono1.text = infoItem["Telefono 1"] as? String
-            telefono2.text = infoItem["Telefono 2"] as? String
-            direccion1.text = infoItem["Direccion 1"] as? String
-            direccion2.text = infoItem["Direccion 2"] as? String
-            ciudad.text = infoItem["Ciudad"] as? String
-            pais.text = infoItem["Pais"] as? String
-            CP.text = infoItem["CP"] as? String
+        var proove : proovedor?
+        for x in itemInfo{if x.ID == items[indexPath.row]{ proove = x}}
+        
+        if proove != nil {
+            proovedorID.text = proove?.ID ?? ""
+            nombre.text = proove?.name ?? ""
+            apellido.text = proove?.apellido ?? ""
+            email.text = proove?.email ?? ""
+            telefono1.text = proove?.telefono1 ?? ""
+            telefono2.text = proove?.telefono2 ?? ""
+            direccion1.text = proove?.direccion1 ?? ""
+            direccion2.text = proove?.direccion2 ?? ""
+            ciudad.text = proove?.ciudad ?? ""
+            pais.text = proove?.pais ?? ""
+            CP.text = proove?.CP ?? ""
             validar()
         }else {
             let alert = UIAlertController(title: "No existe el proovedor", message: nil, preferredStyle: .alert)
@@ -314,7 +328,7 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
         
         
         
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Proovedores").document(proovedorID.text!).setData(data)
+        db.collection("SexyRevolverData").document("Inventario").collection("Proovedores").document(proovedorID.text!).setData(data)
         { err in
             if let err = err {
                 print("Error writing document: \(err)")
@@ -331,15 +345,27 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
     func loadFireStoreData()  {
         
         //MARK: CARGAR PROOVEDORES
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Proovedores").getDocuments { (QuerySnapshot, err) in
+        db.collection("SexyRevolverData").document("Inventario").collection("Proovedores").getDocuments { (QuerySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
                     self.items.append(document.documentID)
-                    self.itemInfo[document.documentID] = document.data() as NSDictionary
-                    print(self.items)
+                    let infoItem = document.data()
+                    let item = proovedor()
+                    item.name = infoItem["Nombre"] as! String
+                    item.apellido = infoItem["Aoellido"] as? String
+                    item.ID = infoItem["ID"] as? String
+                    item.email = infoItem["email"] as? String
+                    item.telefono1 = infoItem["Telefono 1"] as? String
+                    item.telefono2 = infoItem["Telefono 2"] as? String
+                    item.direccion1 = infoItem["Direccion 1"] as? String
+                    item.direccion2 = infoItem["Direccion 2"] as? String
+                    item.ciudad = infoItem["Ciudad"] as? String
+                    item.pais = infoItem["Pais"] as? String
+                    item.CP = infoItem["CP"] as? String
+                    self.itemInfo.append(item)
                 }
                 self.tabla.reloadData()
                 SVProgressHUD.dismiss()
@@ -350,7 +376,7 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
     }
     
     func deleteFireStoreData(Documento : String)  {
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Proovedores").document(Documento).delete { (err) in
+        db.collection("SexyRevolverData").document("Inventario").collection("Proovedores").document(Documento).delete { (err) in
             if let err = err {
                 print("Error removing document: \(err)")
             } else {

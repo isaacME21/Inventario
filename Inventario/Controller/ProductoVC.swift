@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 import SVProgressHUD
-import Parse
+
 
 class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIPickerViewDelegate, UIPickerViewDataSource{
 
@@ -39,7 +39,19 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     
     @IBOutlet weak var saveButton: UIButton!
     
-    
+    class articulo{
+        var name = ""
+        var atributos : String?
+        var beneficioBruto : String?
+        var categoria : String?
+        var impuestos : String?
+        var margen : String?
+        var precioDeCompra : String?
+        var precioDeVenta : String?
+        var proovedores : String?
+        var referencia : String?
+        var imagen : UIImage?
+    }
     
     
     let db = Firestore.firestore()
@@ -55,7 +67,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     var categoriasArray = [String]()
     var proovedoresArray = [String]()
     let impuestosArray = ["10","16","20"]
-    var itemInfo = [String : NSDictionary]()
+    var itemInfo = [articulo]()
     
     
     //MARK: VARIABLES PARA UISERACHBAR
@@ -262,14 +274,14 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     }
     @IBAction func save(_ sender: UIButton) {
         save()
-        deleteTextfields()
-        items.removeAll()
-        itemInfo.removeAll()
-        categoriasArray.removeAll()
-        proovedoresArray.removeAll()
-        loadFireStoreData()
-        borderTextFields1()
-        colorTextFields()
+        self.deleteTextfields()
+        self.items.removeAll()
+        self.itemInfo.removeAll()
+        self.categoriasArray.removeAll()
+        self.proovedoresArray.removeAll()
+        self.loadFireStoreData()
+        self.borderTextFields1()
+        self.colorTextFields()
     }
     
 
@@ -301,19 +313,25 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let producto = items[indexPath.row]
-        if let infoItem = itemInfo[producto] {
-            if let itemImage = infoItem["Imagen"]{ image.image = UIImage(data: itemImage as! Data) }
-            nombre.text = infoItem["Nombre"] as? String
-            atributos.text = infoItem["Atributos"] as? String
-            beneficoBruto.text = infoItem["BeneficioBruto"] as? String
-            categoria.text = infoItem["Categoria"] as? String
-            impuestos.text = infoItem["Impuestos"] as? String
-            margen.text = infoItem["Margen"] as? String
-            PrecioDeCompra.text = infoItem["Precio de Compra"] as? String
-            precioDeVenta.text = infoItem["Precio de Venta"] as? String
-            proovedores.text = infoItem["Proovedores"] as? String
-            referencia.text = infoItem["Referencia"] as? String
+        var art : articulo?
+        for x in itemInfo{if x.name == items[indexPath.row]{ art = x}}
+        
+        if art != nil {
+            if let itemImage = art?.imagen{
+                image.image = itemImage
+            }else{
+                image.image = UIImage(named: "MarcoFotoBlack")
+            }
+            nombre.text = art!.name
+            atributos.text = art?.atributos ?? ""
+            beneficoBruto.text = art?.beneficioBruto ?? ""
+            categoria.text = art?.categoria ?? ""
+            impuestos.text = art?.impuestos ?? ""
+            margen.text = art?.margen ?? ""
+            PrecioDeCompra.text = art?.precioDeCompra ?? ""
+            precioDeVenta.text = art?.precioDeVenta ?? ""
+            proovedores.text = art?.proovedores ?? ""
+            referencia.text = art?.referencia ?? ""
             validar()
         }else {
             let alert = UIAlertController(title: "No existe el producto", message: nil, preferredStyle: .alert)
@@ -594,12 +612,16 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         margen.layer.borderColor = errorColor.cgColor
         proovedores.layer.borderColor = errorColor.cgColor
     }
+    
+    
+    
+    
+    
     //MARK: METODOS DE FIRESTORE
     func save()  {
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Articulos").document(nombre.text!).setData([
+        db.collection("SexyRevolverData").document("Inventario").collection("Articulos").document(nombre.text!).setData([
             "Nombre" : nombre.text!,
             "Referencia" : referencia.text!,
-            "Codigo De Barras" : codigoDeBarras.image?.jpegData(compressionQuality: 0.5) ?? "",
             "Categoria" : categoria.text!,
             "Atributos": atributos.text!,
             "Impuestos": impuestos.text!,
@@ -607,14 +629,12 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
             "Precio de Compra": PrecioDeCompra.text!,
             "BeneficioBruto": beneficoBruto.text!,
             "Margen": margen.text!,
-            "Proovedores": proovedores.text!,
-            "Imagen": image.image?.jpegData(compressionQuality: 0.25) ?? ""])
+            "Proovedores": proovedores.text!])
         { err in
             if let err = err {
                 print("Error writing document: \(err)")
             } else {
                 print("Document successfully written!")
-                self.image.image = UIImage(named: "MarcoFotoBlack")
                 self.codigoDeBarras.image = UIImage(named: "barcode")
                 self.saveButton.isUserInteractionEnabled = false
                 self.saveButton.alpha = 0.5
@@ -622,30 +642,56 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
             }
         }
         
-        
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").document(categoria.text!).setData([
-            nombre.text! : true
-        ]) { err in
-            if let err = err {
-                print("Error writing document: \(err)")
-            } else {
-                print("Document successfully written!")
-            }
+        if image.image != UIImage(named: "MarcoFotoBlack") {
+            guard let imagenData = image.image?.jpegData(compressionQuality: 0.25) else { fatalError("Error al convertir la imagen") }
+            uploadProfileImage(imageData: imagenData, name: nombre.text!)
         }
         
     }
+    
     func loadFireStoreData()  {
         
         //MARK: CARGAR ARTICULOS
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Articulos").getDocuments { (QuerySnapshot, err) in
+        db.collection("SexyRevolverData").document("Inventario").collection("Articulos").getDocuments { (QuerySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
                     self.items.append(document.documentID)
-                    self.itemInfo[document.documentID] = document.data() as NSDictionary
-                    print(self.items)
+                    let infoItem = document.data()
+                    let item = articulo()
+                    item.name = infoItem["Nombre"] as! String
+                    item.atributos = infoItem["Atributos"] as? String
+                    item.beneficioBruto = infoItem["BeneficioBruto"] as? String
+                    item.categoria = infoItem["Categoria"] as? String
+                    item.impuestos = infoItem["Impuestos"] as? String
+                    item.margen = infoItem["Margen"] as? String
+                    item.precioDeCompra = infoItem["Precio de Compra"] as? String
+                    item.precioDeVenta = infoItem["Precio de Venta"] as? String
+                    item.proovedores = infoItem["Proovedores"] as? String
+                    item.referencia = infoItem["Referencia"] as? String
+                    
+                    let storageReference = Storage.storage().reference()
+                    let profileImageRef = storageReference.child("Articulos").child(document.documentID)
+                    // Fetch the download URL
+                    profileImageRef.downloadURL { url, error in
+                        if let error = error {
+                            // Handle any errors
+                            print("Error took place \(error.localizedDescription)")
+                        } else {
+                            // Get the download URL for 'images/stars.jpg'
+                            print("Profile image download URL \(String(describing: url!))")
+                            do {
+                                let imageData : NSData = try NSData(contentsOf: url!)
+                                item.imagen = UIImage(data: imageData as Data)
+                                print("Se bajo la foto")
+                            } catch {
+                                print(error)
+                            }
+                        }
+                    }
+                    self.itemInfo.append(item)
                 }
                 self.tabla.reloadData()
                 SVProgressHUD.dismiss()
@@ -655,7 +701,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         }
         
         //MARK: CARGAR CATEGORIAS
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").getDocuments { (QuerySnapshot, err) in
+        db.collection("SexyRevolverData").document("Inventario").collection("Categorias").getDocuments { (QuerySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
@@ -671,7 +717,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         
         
         //MARK: CARGAR PROOVEDORES
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Proovedores").getDocuments { (QuerySnapshot, err) in
+        db.collection("SexyRevolverData").document("Inventario").collection("Proovedores").getDocuments { (QuerySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
@@ -687,11 +733,40 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         
     }
     func deleteFireStoreData(Documento : String)  {
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Articulos").document(Documento).delete { (err) in
+        db.collection("SexyRevolverData").document("Inventario").collection("Articulos").document(Documento).delete { (err) in
             if let err = err {
                 print("Error removing document: \(err)")
             } else {
                 print("Document successfully removed!")
+                let storageReference = Storage.storage().reference()
+                let profileImageRef = storageReference.child("Articulos").child(Documento)
+                //Removes image from storage
+                profileImageRef.delete { error in
+                    if let error = error {
+                        print(error)
+                    } else {
+                        print("File successfully removed!")
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    func uploadProfileImage(imageData: Data , name : String){
+        let storageReference = Storage.storage().reference()
+        let profileImageRef = storageReference.child("Articulos").child(name)
+        
+        let uploadMetaData = StorageMetadata()
+        uploadMetaData.contentType = "image/jpeg"
+        
+        profileImageRef.putData(imageData, metadata: uploadMetaData) { (uploadedImageMeta, error) in
+            if error != nil
+            {
+                print("Error took place \(String(describing: error?.localizedDescription))")
+                return
+            } else {
+                print("Meta data of uploaded image \(String(describing: uploadedImageMeta))")
             }
         }
     }

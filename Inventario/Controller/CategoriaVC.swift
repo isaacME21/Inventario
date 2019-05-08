@@ -7,16 +7,16 @@
 //
 
 import UIKit
-import SideMenu
 import Firebase
 import SVProgressHUD
-import Parse
 
 class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
-    
-    
-    
+    class categoriaClass{
+        var name = ""
+        var categoria : String?
+        var imagen : UIImage?
+    }
 
     @IBOutlet weak var pageControl: UIPageControl!
     @IBOutlet weak var nombre: UITextField!
@@ -35,8 +35,8 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     //MARK: VARIABLES PARA UISERACHBAR
     var dataFiltered = [String]()
     var isSearching = false
-    var categorias = [String]()
-    var categoriasInfo = [String : NSDictionary]()
+    var categorias = [categoriaClass]()
+    var categoriasString = [String]()
     
     
     @IBOutlet weak var saveButton: UIButton!
@@ -95,7 +95,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     //TODO: - HANDLE REFRESH
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         categorias.removeAll()
-        categoriasInfo.removeAll()
+        categoriasString.removeAll()
         self.loadFireStoreData()
         refreshControl.endRefreshing()
     }
@@ -114,38 +114,34 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     //MARK: TABLA DE CATEGORIAS
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if isSearching {
-            return dataFiltered.count
-        }
-        
+        if isSearching { return dataFiltered.count }
         return categorias.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
-        
-        
-        
         if isSearching{
             cell.textLabel?.text = dataFiltered[indexPath.row]
         }
         else {
-            cell.textLabel?.text = categorias[indexPath.row]
+            cell.textLabel?.text = categoriasString[indexPath.row]
         }
-        
-        
         return cell
     }
     
     //MOSTRAR INFORMACION AL TOCAR UNA CELDA
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cat = categorias[indexPath.row]
+        var cat : categoriaClass?
         
-        if let infoCat = categoriasInfo[cat] {
-            nombre.text = cat
-            categoria.text = infoCat["Categoria"] as? String
-            if let catImage = infoCat["Imagen"] {
-                imagen.image = UIImage(data: catImage as! Data)
+        for x in categorias{if x.name == categoriasString[indexPath.row]{ cat = x}}
+        
+        if cat != nil {
+            nombre.text = cat!.name
+            categoria.text = cat?.categoria ?? ""
+            if let catImage = cat?.imagen{
+                imagen.image = catImage
+            }else{
+                imagen.image = UIImage(named: "MarcoFotoBlack")
             }
         }else{
             let alert = UIAlertController(title: "No existe la categoria", message: nil, preferredStyle: .alert)
@@ -166,7 +162,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
             tabla.reloadData()
         } else {
             isSearching = true
-            dataFiltered = categorias.filter({$0.contains(searchBar.text!)})
+            dataFiltered = categoriasString.filter({$0.contains(searchBar.text!)})
             tabla.reloadData()
         }
     }
@@ -185,11 +181,11 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     }
     
     func pickerView( _ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return categorias[row]
+        return categorias[row].name
     }
     
     func pickerView( _ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        categoria.text = categorias[row]
+        categoria.text = categorias[row].name
     }
     
 
@@ -284,7 +280,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
             saveButton.isUserInteractionEnabled = false
             saveButton.alpha = 0.5
             categorias.removeAll()
-            categoriasInfo.removeAll()
+            categoriasString.removeAll()
             nombre.text?.removeAll()
             categoria.text?.removeAll()
             imagen.image = UIImage(named: "MarcoFotoBlack")
@@ -332,16 +328,13 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     }
     
     
-    
-    
-    
-    
+
     
     
     @IBAction func Save(_ sender: UIButton) {
         saveFireStoreData()
         categorias.removeAll()
-        categoriasInfo.removeAll()
+        categoriasString.removeAll()
         loadFireStoreData()
         nombre.layer.borderColor = UIColor.red.cgColor
         nombre.layer.borderWidth = 1
@@ -353,10 +346,8 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     //MARK: Firebase Methods
     func saveFireStoreData()  {
         if nombre.text?.isEmpty == false {
-            db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").document(nombre.text!).setData([
-                "Nombre" : nombre.text ?? "",
-                "Categoria": categoria.text ?? "",
-                "Imagen" : imagen.image?.jpegData(compressionQuality: 0.25) ?? ""] )
+            db.collection("SexyRevolverData").document("Inventario").collection("Categorias").document(nombre.text!).setData([
+                "Nombre" : nombre.text!] )
             { err in
                 if let err = err {
                     print("Error writing document: \(err)")
@@ -370,7 +361,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         }
         
         if categoria.text?.isEmpty == false {
-            db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").document(nombre.text!).setData([
+            db.collection("SexyRevolverData").document("Inventario").collection("Categorias").document(nombre.text!).setData([
                 "Categoria": categoria.text!])
             { err in
                 if let err = err {
@@ -386,18 +377,8 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         }
         
         if imagen.image != UIImage(named: "MarcoFotoBlack") {
-            db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").document(nombre.text!).setData([
-                "Imagen" : imagen.image!.jpegData(compressionQuality: 0.25)!])
-            { err in
-                if let err = err {
-                    print("Error writing document: \(err)")
-                } else {
-                    print("Document successfully written!")
-                    self.imagen.image = UIImage(named: "MarcoFotoBlack")
-                    self.tabla.reloadData()
-                }
-            }
-            
+            guard let imagenData = imagen.image?.jpegData(compressionQuality: 0.25) else { fatalError("Error al convertir la imagen") }
+            uploadProfileImage(imageData: imagenData, name: nombre.text!)
         }
         
     }
@@ -405,15 +386,38 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
 
     func loadFireStoreData()  {
 
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").getDocuments { (QuerySnapshot, err) in
+        db.collection("SexyRevolverData").document("Inventario").collection("Categorias").getDocuments { (QuerySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
-                    self.categorias.append(document.documentID)
-                    self.categoriasInfo[document.documentID] = document.data() as NSDictionary
-                    print(self.categorias)
+                    self.categoriasString.append(document.documentID)
+                    let data = document.data()
+                    let cat = categoriaClass()
+                    cat.name = document.documentID
+                    cat.categoria = data["Categoria"] as? String
+                    
+                    let storageReference = Storage.storage().reference()
+                    let profileImageRef = storageReference.child("Categorias").child(document.documentID)
+                    // Fetch the download URL
+                    profileImageRef.downloadURL { url, error in
+                        if let error = error {
+                            // Handle any errors
+                            print("Error took place \(error.localizedDescription)")
+                        } else {
+                            // Get the download URL for 'images/stars.jpg'
+                            print("Profile image download URL \(String(describing: url!))")
+                            do {
+                                let imageData : NSData = try NSData(contentsOf: url!)
+                                cat.imagen = UIImage(data: imageData as Data)
+                                print("Se bajo la foto")
+                            } catch {
+                                print(error)
+                            }
+                        }
+                    }
+                    self.categorias.append(cat)
                 }
                 self.tabla.reloadData()
                 SVProgressHUD.dismiss()
@@ -423,15 +427,53 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
 
 
     func deleteFireStoreData(Documento : String)  {
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Categorias").document(Documento).delete { (err) in
+        db.collection("SexyRevolverData").document("Inventario").collection("Categorias").document(Documento).delete { (err) in
             if let err = err {
                 print("Error removing document: \(err)")
             } else {
                 print("Document successfully removed!")
+                let storageReference = Storage.storage().reference()
+                let profileImageRef = storageReference.child("Categorias").child(Documento)
+                //Removes image from storage
+                profileImageRef.delete { error in
+                    if let error = error {
+                        print(error)
+                    } else {
+                        print("File successfully removed!")
+                    }
+                }
             }
         }
     }
     
+    func uploadProfileImage(imageData: Data , name : String){
+        let storageReference = Storage.storage().reference()
+        let profileImageRef = storageReference.child("Categorias").child(name)
+
+        let uploadMetaData = StorageMetadata()
+        uploadMetaData.contentType = "image/jpeg"
+        
+        profileImageRef.putData(imageData, metadata: uploadMetaData) { (uploadedImageMeta, error) in
+            if error != nil
+            {
+                print("Error took place \(String(describing: error?.localizedDescription))")
+                return
+            } else {
+                print("Meta data of uploaded image \(String(describing: uploadedImageMeta))")
+                self.db.collection("SexyRevolverData").document("Inventario").collection("Categorias").document(name).updateData([
+                    "Imagen" : profileImageRef.fullPath])
+                { err in
+                    if let err = err {
+                        print("Error writing document: \(err)")
+                    } else {
+                        print("Document successfully written!")
+                        self.imagen.image = UIImage(named: "MarcoFotoBlack")
+                        self.tabla.reloadData()
+                    }
+                }
+            }
+        }
+    }
     
 }
 

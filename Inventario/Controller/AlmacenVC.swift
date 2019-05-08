@@ -9,7 +9,6 @@
 import UIKit
 import SVProgressHUD
 import Firebase
-import Parse
 
 class AlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
 
@@ -136,7 +135,7 @@ class AlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UI
     
     //TODO: - Cargar informacion de Firebase
     func load(Collection: String) {
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
+        db.collection("SexyRevolverData").document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
@@ -150,8 +149,10 @@ class AlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UI
             }
         }
     }
+    
+    
     func loadOption2(Almacen : String)  {
-        db.collection(Auth.auth().currentUser!.email!).document("Inventario").collection("Almacenes").document(Almacen).collection("Articulos").getDocuments { (QuerySnapshot, err) in
+        db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Almacen).collection("Articulos").getDocuments { (QuerySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {

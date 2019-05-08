@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 import SVProgressHUD
-import Parse
+
 
 class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
@@ -597,34 +597,19 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
                         }
                     }
                 }
-                
-                
-                
-                
             }
-            
         }
-
     }
     
     
     //TODO: - FUNCION DE DATEPICKER
     @objc func dateChange(DatePicker: UIDatePicker){
-        
         let dateFormat = DateFormatter()
         dateFormat.dateFormat =  "MM/dd/yyyy"
         fecha.text = dateFormat.string(from: datePicker.date)
-        
     }
-    
-
 
 }
-
-
-
-
-
 extension String {
     func isValidEmail() -> Bool {
         // here, `try!` will always succeed because the pattern is valid

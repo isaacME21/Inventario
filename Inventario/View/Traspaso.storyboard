@@ -171,10 +171,10 @@
             </objects>
             <point key="canvasLocation" x="4179.4921875" y="2948.4375"/>
         </scene>
-        <!--View Controller-->
+        <!--Traspaso En EsperaVC-->
         <scene sceneID="sLa-oC-zFD">
             <objects>
-                <viewController id="yhE-oQ-I6h" sceneMemberID="viewController">
+                <viewController id="yhE-oQ-I6h" customClass="TraspasoEnEsperaVC" customModule="Inventario" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Mtb-go-zf1"/>
                         <viewControllerLayoutGuide type="bottom" id="sYl-cw-6Xg"/>
@@ -188,24 +188,31 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="V6e-uQ-6NU">
-                                <rect key="frame" x="0.0" y="140" width="1024" height="628"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Md1-ph-Qu6">
+                                <rect key="frame" x="0.0" y="148" width="1024" height="620"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" id="BS5-rm-5Cd">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" id="Vld-6S-l0P">
                                         <rect key="frame" x="0.0" y="28" width="1024" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="BS5-rm-5Cd" id="KNf-te-ash">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Vld-6S-l0P" id="uGY-Rk-q1m">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="yhE-oQ-I6h" id="Fj5-iE-MyG"/>
+                                    <outlet property="delegate" destination="yhE-oQ-I6h" id="Cwd-8D-isw"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
+                    <connections>
+                        <outlet property="tabla" destination="Md1-ph-Qu6" id="9dH-bM-LLK"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="N2b-2D-ceT" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
