@@ -22,6 +22,7 @@ class MenuVC: UITableViewController {
         case 4: NotificationCenter.default.post(name: NSNotification.Name("gotoVisualizar"), object: nil)
         case 5: NotificationCenter.default.post(name: NSNotification.Name("gotoAlmacen"), object: nil)
         case 6: NotificationCenter.default.post(name: NSNotification.Name("gotoTraspaso"), object: nil)
+        case 7: NotificationCenter.default.post(name: NSNotification.Name("gotoReportes"), object: nil)
         default: break
         }
     }

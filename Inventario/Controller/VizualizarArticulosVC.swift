@@ -26,34 +26,27 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
     @IBOutlet weak var imagen: UIImageView!
     
     
-    let db = Firestore.firestore()
+    let db : Firestore = Firestore.firestore()
     
-    let picker = UIPickerView()
+    let picker : UIPickerView = UIPickerView()
     
     //MARK: VARIABLES PARA UISERACHBAR
-    var dataFiltered = [String]()
-    var items = [String]()
-    var isSearching = false
-    var itemsInfo = [item]()
+    var dataFiltered : [String] = [String]()
+    var items : [String] = [String]()
+    var isSearching : Bool = false
+    var itemsInfo : [item] = [item]()
     
-    var almacenes = ["Almacen 1","Almacen 2", "Almacen 3", "Almacen 4"]
+    var almacenes : [String] = ["Almacen 1","Almacen 2", "Almacen 3", "Almacen 4"]
     
     //MARK: REFRESH CONTROL
     lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
+        let refreshControl : UIRefreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:#selector(VizualizarArticulosVC.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refreshControl.tintColor = UIColor.blue
         
         return refreshControl
     }()
     
-    class item{
-        var name = ""
-        var precioDeCompra : String?
-        var precioDeVenta : String?
-        var proovedores : String?
-        var imagen : UIImage?
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,7 +61,6 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
     override func viewDidAppear(_ animated: Bool) {
         SVProgressHUD.show(withStatus: "Cargando")
         DispatchQueue.global(qos: .background).async {
-            //(self.items,self.itemInfo) = self.firebase.load(Collection: "Clientes")
             self.load(Collection: "Articulos")
         }
         
@@ -94,7 +86,7 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
+        let cell : UITableViewCell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
         
         
         
@@ -115,7 +107,7 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
         for x in itemsInfo{if x.name == items[indexPath.row]{ art = x}}
         
         if art != nil {
-            if let itemImage = art?.imagen{
+            if let itemImage : UIImage = art?.imagen{
                 imagen.image = itemImage
             }else{
                 imagen.image = UIImage(named: "MarcoFotoBlack")
@@ -125,8 +117,8 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
             precioDeVenta.text = art?.precioDeVenta ?? ""
             proovedor.text = art?.proovedores ?? ""
         }else{
-            let alert = UIAlertController(title: "No existe la categoria", message: nil, preferredStyle: .alert)
-            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            let alert : UIAlertController = UIAlertController(title: "No existe la categoria", message: nil, preferredStyle: .alert)
+            let OKAction : UIAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(OKAction)
             
             self.present(alert, animated: true)
@@ -180,25 +172,25 @@ class VizualizarArticulosVC: UIViewController, UITextFieldDelegate, UITableViewD
     //TODO: - Cargar informacion de Firebase
     func load(Collection: String) {
         db.collection("SexyRevolverData").document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
                     self.items.append(document.documentID)
-                    let infoItem = document.data()
-                    let itemObj = item()
+                    let infoItem : [String : Any] = document.data()
+                    let itemObj : item = item()
                     itemObj.name = infoItem["Nombre"] as! String
                     itemObj.precioDeCompra = infoItem["Precio de Compra"] as? String
                     itemObj.precioDeVenta = infoItem["Precio de Venta"] as? String
                     itemObj.proovedores = infoItem["Proovedores"] as? String
                     
                     
-                    let storageReference = Storage.storage().reference()
-                    let profileImageRef = storageReference.child("Articulos").child(document.documentID)
+                    let storageReference : StorageReference = Storage.storage().reference()
+                    let profileImageRef : StorageReference = storageReference.child("Articulos").child(document.documentID)
                     // Fetch the download URL
                     profileImageRef.downloadURL { url, error in
-                        if let error = error {
+                        if let error : Error = error {
                             // Handle any errors
                             print("Error took place \(error.localizedDescription)")
                         } else {

@@ -117,6 +117,8 @@ class LogInVC: UIViewController {
                 }
                 else{
                     //Logeo exitoso
+                    UserDefaults.standard.set(UserNameTemp, forKey: "UserName")
+                    UserDefaults.standard.set(contraseñaTemp, forKey: "Pass")
                     let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
                     changeRequest?.displayName = "ADMIN"
                     changeRequest?.commitChanges { (error) in

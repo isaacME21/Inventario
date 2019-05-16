@@ -21,20 +21,20 @@ class AlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UI
     @IBOutlet weak var existencias: UITextField!
     
     
-    let db = Firestore.firestore()
-    let picker = UIPickerView()
+    let db : Firestore = Firestore.firestore()
+    let picker : UIPickerView = UIPickerView()
     
     //TODO: - VARIABLES PARA UISERACHBAR
-    var dataFiltered = [String]()
-    var isSearching = false
-    var items = [String]()
-    var itemInfo = [String : NSDictionary]()
-    var items2 = [String]()
-    var itemInfo2 = [String : NSDictionary]()
+    var dataFiltered : [String] = [String]()
+    var isSearching : Bool = false
+    var items : [String] = [String]()
+    var itemInfo : [String : NSDictionary] = [String : NSDictionary]()
+    var items2 : [String] = [String]()
+    var itemInfo2 : [String : NSDictionary] = [String : NSDictionary]()
     
     //MARK: REFRESH CONTROL
     lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
+        let refreshControl : UIRefreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:#selector(AlmacenVC.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refreshControl.tintColor = UIColor.blue
         
@@ -66,7 +66,7 @@ class AlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UI
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         items2.removeAll()
         itemInfo2.removeAll()
-        guard let alm = almacen.text else {return}
+        guard let alm = almacen.text else {fatalError("Error en almacen Handle Refresh")}
         self.loadOption2(Almacen: alm)
         refreshControl.endRefreshing()
     }
@@ -81,14 +81,14 @@ class AlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UI
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
+        let cell : UITableViewCell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
         
         if isSearching{ cell.textLabel?.text = dataFiltered[indexPath.row] }
         else { cell.textLabel?.text = items2[indexPath.row] }
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let articulo = items2[indexPath.row]
+        let articulo : String = items2[indexPath.row]
         
         existencias.text = itemInfo2[articulo]!["Cantidad"] as? String
     }
@@ -136,7 +136,7 @@ class AlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UI
     //TODO: - Cargar informacion de Firebase
     func load(Collection: String) {
         db.collection("SexyRevolverData").document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
@@ -153,7 +153,7 @@ class AlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UI
     
     func loadOption2(Almacen : String)  {
         db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Almacen).collection("Articulos").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 self.items2.removeAll()

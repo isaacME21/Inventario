@@ -43,22 +43,22 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
     var password : UITextField?
     
     
-    let firebase = FuncionesFirebase()
-    let db = Firestore.firestore()
+    let firebase : FuncionesFirebase = FuncionesFirebase()
+    let db : Firestore = Firestore.firestore()
     
-    let datePicker = UIDatePicker()
+    let datePicker : UIDatePicker = UIDatePicker()
     
     //TODO: - VARIABLES PARA UISERACHBAR
-    var dataFiltered = [String]()
-    var isSearching = false
-    var items = [String]()
-    var itemInfo = [String : NSDictionary]()
+    var dataFiltered : [String] = [String]()
+    var isSearching : Bool = false
+    var items : [String] = [String]()
+    var itemInfo : [String : NSDictionary] = [String : NSDictionary]()
 
     let errorColor = UIColor.red
     
     //MARK: REFRESH CONTROL
     lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
+        let refreshControl : UIRefreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:#selector(ClientesVC.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refreshControl.tintColor = UIColor.blue
         
@@ -66,8 +66,8 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
     }()
     
     //MARK: VARIABLES PARA BASE DE DATOS SECUNDARIA
-    var users = [String]()
-    var usersInfo = [String : NSDictionary]()
+    var users : [String] = [String]()
+    var usersInfo : [String : NSDictionary] = [String : NSDictionary]()
     
     
     override func viewDidLoad() {
@@ -102,12 +102,15 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
         fecha.inputView = datePicker
         
         self.tabla.addSubview(self.refreshControl)
+        
+        do{ try Auth.auth().signOut() }
+        catch{ print("Error al cerrar sesion") }
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         SVProgressHUD.show(withStatus: "Cargando")
         DispatchQueue.global(qos: .background).async {
-            //(self.items,self.itemInfo) = self.firebase.load(Collection: "Clientes")
             self.load()
         }
         
@@ -123,8 +126,22 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
     
     //TODO: - BOTONES
     @IBAction func salir(_ sender: UIBarButtonItem) {
-        dismiss(animated: true, completion: nil)
+        if Auth.auth().currentUser != nil{
+            dismiss(animated: true, completion: nil)
+        }else{
+            let correo = UserDefaults.standard.object(forKey: "UserName") as? String
+            let pass = UserDefaults.standard.object(forKey: "Pass") as? String
+            Auth.auth().signIn(withEmail: correo!, password: pass!) { (DataResult, error) in
+                if error != nil{
+                    print(error!)
+                }
+                else{
+                    self.dismiss(animated: true, completion: nil)
+                }
+            }
+        }
     }
+    
     @IBAction func borrarCliente(_ sender: UIBarButtonItem) {
         
         if clienteID.text?.isEmpty == false{
@@ -148,12 +165,12 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
         saveButton.isUserInteractionEnabled = false
         saveButton.alpha = 0.5
         
-        let alert = UIAlertController(title: "Ingresa Tus Credenciales", message: nil, preferredStyle: .alert)
+        let alert : UIAlertController = UIAlertController(title: "Ingresa Tus Credenciales", message: nil, preferredStyle: .alert)
         alert.addTextField(configurationHandler: newEmail)
         alert.addTextField(configurationHandler: password)
         
-        let OKAction = UIAlertAction(title: "Crear", style: .default, handler: self.crearUsuario)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let OKAction : UIAlertAction = UIAlertAction(title: "Crear", style: .default, handler: self.crearUsuario)
+        let cancelAction : UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alert.addAction(OKAction)
         alert.addAction(cancelAction)
         
@@ -161,13 +178,13 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
         
     }
     @IBAction func guardarCliente(_ sender: UIButton) {
-        var vipStatus = false
+        var vipStatus : Bool = false
         if VipButton.isOn == true {
             vipStatus = true
         }
         
         
-        var data = [String : Any]()
+        var data : [String : Any] = [String : Any]()
         data["ID"] = clienteID.text ?? ""
         data["Tarjeta"] = tarjeta.text ?? ""
         data["Deuda Actual"] = deudaActual.text ?? ""
@@ -208,7 +225,7 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
+        let cell : UITableViewCell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
         
         if isSearching{ cell.textLabel?.text = dataFiltered[indexPath.row] }
         else { cell.textLabel?.text = items[indexPath.row] }
@@ -216,9 +233,9 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cliente = items[indexPath.row]
+        let cliente : String = items[indexPath.row]
         
-        if let infoItem = itemInfo[cliente] {
+        if let infoItem : NSDictionary = itemInfo[cliente] {
             clienteID.text = cliente
             tarjeta.text = infoItem["Tarjeta"] as? String
             deudaActual.text = infoItem["Deuda Actual"] as? String
@@ -241,8 +258,8 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
             }
             validar()
         }else{
-            let alert = UIAlertController(title: "No existe el cliente", message: nil, preferredStyle: .alert)
-            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            let alert : UIAlertController = UIAlertController(title: "No existe el cliente", message: nil, preferredStyle: .alert)
+            let OKAction : UIAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(OKAction)
             
             self.present(alert, animated: true)
@@ -277,8 +294,8 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
         colorTextFields()
         borderTextFields1()
         
-        var listo = 0
-        let textfields = [clienteID,deudaMaxima,nombre,apellido,email,telefono1,direccion1,ciudad,pais,CP,pass]
+        var listo : Int = 0
+        let textfields : [UITextField?] = [clienteID,deudaMaxima,nombre,apellido,email,telefono1,direccion1,ciudad,pais,CP,pass]
         
         for x in textfields {
             if (x?.text?.isEmpty)!{
@@ -372,43 +389,43 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 
         if textField == deudaMaxima {
-            let caracteresPermitidos = CharacterSet.decimalDigits
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.decimalDigits
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
         if textField == deudaActual {
-            let caracteresPermitidos = CharacterSet.decimalDigits
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.decimalDigits
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
         if textField == telefono1 {
-            let caracteresPermitidos = CharacterSet.decimalDigits
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.decimalDigits
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
         if textField == telefono2 {
-            let caracteresPermitidos = CharacterSet.decimalDigits
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.decimalDigits
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
         if textField == CP {
-            let caracteresPermitidos = CharacterSet.decimalDigits
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.decimalDigits
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
         if textField == email {
-            let caracteresPermitidos = CharacterSet.init(charactersIn: "abcdefghijklmnñopqrstuvwxyz@.")
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.init(charactersIn: "abcdefghijklmnñopqrstuvwxyz@.")
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
-        let caracteresPermitidos = CharacterSet.init(charactersIn: "abcdefghijklmnopqrstuvwxyz1234567890.,-/ ")
-        let characterSet = CharacterSet(charactersIn: string)
+        let caracteresPermitidos : CharacterSet = CharacterSet.init(charactersIn: "abcdefghijklmnopqrstuvwxyz1234567890.,-/ ")
+        let characterSet : CharacterSet = CharacterSet(charactersIn: string)
         return caracteresPermitidos.isSuperset(of: characterSet)
         
     }
@@ -474,13 +491,12 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
         pais.layer.borderColor = errorColor.cgColor
         CP.layer.borderColor = errorColor.cgColor
     }
-    
-    
     //TODO: INICIALIZACION DE TEXTFIELDS EN ALERTS
     func newEmail (textField: UITextField) {
         newEmail = textField
         newEmail?.placeholder = "User"
     }
+    
     func password(textField: UITextField) {
         password = textField
         password?.placeholder = "Cotraseña"
@@ -492,7 +508,7 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
     func save(Document : String, Data : [String : Any]){
         db.collection("Users").document(Document).updateData(Data)
         { err in
-            if let err = err {
+            if let err : Error = err {
                 print("Error writing document: \(err)")
             } else {
                 print("Document successfully written!")
@@ -505,7 +521,7 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
     //TODO: - Cargar informacion de Firebase
     func load() {
         db.collection("Users").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
@@ -520,17 +536,16 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
     }
     //TODO: ELIMINAR INFORMACION DE FIREBASE
     func deleteFireStoreData(Documento : String)  {
-        
         Auth.auth().signIn(withEmail: Documento, password: pass.text!) { (DataResult, error) in
             
             if error != nil{
                 print(error!)
             }
             else{
-                let user = Auth.auth().currentUser
+                let user : User? = Auth.auth().currentUser
                 
                 user?.delete { error in
-                    if let error = error {
+                    if let error : Error = error {
                         print(error)
                     } else {
                         print("Se borro la cuenta")
@@ -542,7 +557,7 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
         
         
         db.collection("Users").document(Documento).delete { (err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error removing document: \(err)")
             } else {
                 print("Document successfully removed!")
@@ -558,13 +573,13 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
                 
                 if Error!.localizedDescription == "The email address is already in use by another account."{
                     
-                    let alert = UIAlertController(title: "Error al registrar", message: "El e-mail ya esta en uso", preferredStyle: .alert)
+                    let alert : UIAlertController = UIAlertController(title: "Error al registrar", message: "El e-mail ya esta en uso", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
                     
                     self.present(alert, animated: true)
                 }
                 
-                let alert = UIAlertController(title: "Error al registrar", message: "No ingresaste un correo o tu contraseña tiene menos de 6 caracteres", preferredStyle: .alert)
+                let alert : UIAlertController = UIAlertController(title: "Error al registrar", message: "No ingresaste un correo o tu contraseña tiene menos de 6 caracteres", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
                 
                 self.present(alert, animated: true)
@@ -573,15 +588,29 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
                 //Se guardo el usuario
                 print("Registration Complete")
                 
-                let usuarioActual = Auth.auth().currentUser
-                let defaultData : [String : Any] = ["Nombre": "", "Apellido": "","Cumpleaños":"","CP":"","ID":"","VIP Status":false,"Vigencia":"10/19",
-                                                    "Ciudad":"", "Deuda Actual":"","Deuda Maxima":"","Direccion 1":"","Direccion 2":"",
-                                                    "Fecha":"","Tarjeta":usuarioActual!.uid,"Telefono 1":"","Telefono 2":"","email":self.newEmail!.text!,
+                let usuarioActual : User? = Auth.auth().currentUser
+                let defaultData : [String : Any] = ["Nombre": "",
+                                                    "Apellido": "",
+                                                    "Cumpleaños":"",
+                                                    "CP":"",
+                                                    "ID":"",
+                                                    "VIP Status":false,
+                                                    "Vigencia":"10/19",
+                                                    "Ciudad":"",
+                                                    "Deuda Actual":"",
+                                                    "Deuda Maxima":"",
+                                                    "Direccion 1":"",
+                                                    "Direccion 2":"",
+                                                    "Fecha":"",
+                                                    "Tarjeta":usuarioActual!.uid,
+                                                    "Telefono 1":"",
+                                                    "Telefono 2":"",
+                                                    "email":self.newEmail!.text!,
                                                     "Pass":self.password!.text!]
                 
                 
                 self.db.collection("Users").document(self.newEmail!.text!).setData(defaultData){ err in
-                    if let err = err {
+                    if let err : Error = err {
                         print("Error writing document: \(err)")
                     } else {
                         print("Document successfully written!")
@@ -595,6 +624,7 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
                         catch{
                             print("Error al cerrar sesion")
                         }
+                        
                     }
                 }
             }
@@ -604,7 +634,7 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
     
     //TODO: - FUNCION DE DATEPICKER
     @objc func dateChange(DatePicker: UIDatePicker){
-        let dateFormat = DateFormatter()
+        let dateFormat : DateFormatter = DateFormatter()
         dateFormat.dateFormat =  "MM/dd/yyyy"
         fecha.text = dateFormat.string(from: datePicker.date)
     }
@@ -613,7 +643,7 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
 extension String {
     func isValidEmail() -> Bool {
         // here, `try!` will always succeed because the pattern is valid
-        let regex = try! NSRegularExpression(pattern: "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$", options: .caseInsensitive)
+        let regex : NSRegularExpression = try! NSRegularExpression(pattern: "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$", options: .caseInsensitive)
         return regex.firstMatch(in: self, options: [], range: NSRange(location: 0, length: count)) != nil
     }
 }

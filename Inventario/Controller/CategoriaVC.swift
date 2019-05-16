@@ -12,11 +12,7 @@ import SVProgressHUD
 
 class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
-    class categoriaClass{
-        var name = ""
-        var categoria : String?
-        var imagen : UIImage?
-    }
+
 
     @IBOutlet weak var pageControl: UIPageControl!
     @IBOutlet weak var nombre: UITextField!
@@ -26,17 +22,17 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     @IBOutlet weak var searchBar: UISearchBar!
     
     
-    let db = Firestore.firestore()
+    let db : Firestore = Firestore.firestore()
     //let firebaseMethods = FirebaseMethods()
     
-    let imagePicker = UIImagePickerController()
-    let picker = UIPickerView()
+    let imagePicker : UIImagePickerController = UIImagePickerController()
+    let picker : UIPickerView = UIPickerView()
     
     //MARK: VARIABLES PARA UISERACHBAR
-    var dataFiltered = [String]()
-    var isSearching = false
-    var categorias = [categoriaClass]()
-    var categoriasString = [String]()
+    var dataFiltered : [String] = [String]()
+    var isSearching : Bool = false
+    var categorias : [categoriaClass] = [categoriaClass]()
+    var categoriasString : [String] = [String]()
     
     
     @IBOutlet weak var saveButton: UIButton!
@@ -44,7 +40,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     
     //MARK: REFRESH CONTROL
     lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
+        let refreshControl : UIRefreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:#selector(CategoriaVC.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refreshControl.tintColor = UIColor.blue
         
@@ -65,7 +61,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         saveButton.alpha = 0.5
         
         
-        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(SwipeAction(swipe:)))
+        let leftSwipe : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(SwipeAction(swipe:)))
         leftSwipe.direction = UISwipeGestureRecognizer.Direction.left
         self.view.addGestureRecognizer(leftSwipe)
         
@@ -119,7 +115,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
+        let cell : UITableViewCell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
         if isSearching{
             cell.textLabel?.text = dataFiltered[indexPath.row]
         }
@@ -138,14 +134,14 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         if cat != nil {
             nombre.text = cat!.name
             categoria.text = cat?.categoria ?? ""
-            if let catImage = cat?.imagen{
+            if let catImage : UIImage = cat?.imagen{
                 imagen.image = catImage
             }else{
                 imagen.image = UIImage(named: "MarcoFotoBlack")
             }
         }else{
-            let alert = UIAlertController(title: "No existe la categoria", message: nil, preferredStyle: .alert)
-            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            let alert : UIAlertController = UIAlertController(title: "No existe la categoria", message: nil, preferredStyle: .alert)
+            let OKAction : UIAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(OKAction)
             
             self.present(alert, animated: true)
@@ -196,13 +192,9 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     //MARK: Metodo Importante
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
+        guard let userPickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage  else{fatalError("Error en UserPickerImage")}
         
-        if let userPickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            print("se supone que se tiene que cambiar la imagen")
-            imagen.image = userPickedImage
-        }
-        
-        
+        imagen.image = userPickedImage
         imagePicker.dismiss(animated: true, completion: nil)
     }
     
@@ -213,7 +205,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
             imagePicker.allowsEditing = true
             self.present(imagePicker, animated: true, completion: nil)
         }else{
-            let alert  = UIAlertController(title: "Advertencia", message: "No tienes Camara", preferredStyle: .alert)
+            let alert : UIAlertController  = UIAlertController(title: "Advertencia", message: "No tienes Camara", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             
             
@@ -239,7 +231,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     //MARK: Botones
     @IBAction func CameraTapped(_ sender: UIButton) {
         
-        let alert = UIAlertController(title: "Escoge una Imagen", message: nil, preferredStyle: .actionSheet)
+        let alert : UIAlertController = UIAlertController(title: "Escoge una Imagen", message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = UIColor(red:0.82, green:0.64, blue:0.32, alpha:1.0)
         
         
@@ -253,15 +245,10 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         alert.addAction(UIAlertAction.init(title: "Cancelar", style: .cancel, handler: nil))
         
         //Establecer donde se va a mostrar la alerta
-        if let popoverController = alert.popoverPresentationController {
-            
-            popoverController.sourceView = self.view
-            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-            popoverController.permittedArrowDirections = []
-            
-            //popoverController.barButtonItem = sender as? UIBarButtonItem
-        }
-        
+        guard let popoverController = alert.popoverPresentationController else{ fatalError("Error en popoverController")}
+        popoverController.sourceView = self.view
+        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+        popoverController.permittedArrowDirections = []
         
         present(alert, animated: true, completion: nil)
         
@@ -349,7 +336,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
             db.collection("SexyRevolverData").document("Inventario").collection("Categorias").document(nombre.text!).setData([
                 "Nombre" : nombre.text!] )
             { err in
-                if let err = err {
+                if let err : Error = err {
                     print("Error writing document: \(err)")
                 } else {
                     print("Document successfully written!")
@@ -364,7 +351,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
             db.collection("SexyRevolverData").document("Inventario").collection("Categorias").document(nombre.text!).setData([
                 "Categoria": categoria.text!])
             { err in
-                if let err = err {
+                if let err : Error = err {
                     print("Error writing document: \(err)")
                 } else {
                     print("Document successfully written!")
@@ -377,7 +364,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
         }
         
         if imagen.image != UIImage(named: "MarcoFotoBlack") {
-            guard let imagenData = imagen.image?.jpegData(compressionQuality: 0.25) else { fatalError("Error al convertir la imagen") }
+            guard let imagenData : Data = imagen.image?.jpegData(compressionQuality: 0.25) else { fatalError("Error al convertir la imagen") }
             uploadProfileImage(imageData: imagenData, name: nombre.text!)
         }
         
@@ -387,22 +374,22 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     func loadFireStoreData()  {
 
         db.collection("SexyRevolverData").document("Inventario").collection("Categorias").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
                     self.categoriasString.append(document.documentID)
-                    let data = document.data()
-                    let cat = categoriaClass()
+                    let data : [String : Any] = document.data()
+                    let cat : categoriaClass = categoriaClass()
                     cat.name = document.documentID
                     cat.categoria = data["Categoria"] as? String
                     
-                    let storageReference = Storage.storage().reference()
-                    let profileImageRef = storageReference.child("Categorias").child(document.documentID)
+                    let storageReference : StorageReference = Storage.storage().reference()
+                    let profileImageRef : StorageReference = storageReference.child("Categorias").child(document.documentID)
                     // Fetch the download URL
                     profileImageRef.downloadURL { url, error in
-                        if let error = error {
+                        if let error : Error = error {
                             // Handle any errors
                             print("Error took place \(error.localizedDescription)")
                         } else {
@@ -412,6 +399,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
                                 let imageData : NSData = try NSData(contentsOf: url!)
                                 cat.imagen = UIImage(data: imageData as Data)
                                 print("Se bajo la foto")
+                                SVProgressHUD.dismiss()
                             } catch {
                                 print(error)
                             }
@@ -420,7 +408,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
                     self.categorias.append(cat)
                 }
                 self.tabla.reloadData()
-                SVProgressHUD.dismiss()
+                
             }
         }
     }
@@ -428,15 +416,15 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
 
     func deleteFireStoreData(Documento : String)  {
         db.collection("SexyRevolverData").document("Inventario").collection("Categorias").document(Documento).delete { (err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error removing document: \(err)")
             } else {
                 print("Document successfully removed!")
-                let storageReference = Storage.storage().reference()
-                let profileImageRef = storageReference.child("Categorias").child(Documento)
+                let storageReference : StorageReference = Storage.storage().reference()
+                let profileImageRef : StorageReference = storageReference.child("Categorias").child(Documento)
                 //Removes image from storage
                 profileImageRef.delete { error in
-                    if let error = error {
+                    if let error : Error = error {
                         print(error)
                     } else {
                         print("File successfully removed!")
@@ -447,10 +435,10 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
     }
     
     func uploadProfileImage(imageData: Data , name : String){
-        let storageReference = Storage.storage().reference()
-        let profileImageRef = storageReference.child("Categorias").child(name)
+        let storageReference : StorageReference = Storage.storage().reference()
+        let profileImageRef : StorageReference = storageReference.child("Categorias").child(name)
 
-        let uploadMetaData = StorageMetadata()
+        let uploadMetaData : StorageMetadata = StorageMetadata()
         uploadMetaData.contentType = "image/jpeg"
         
         profileImageRef.putData(imageData, metadata: uploadMetaData) { (uploadedImageMeta, error) in
@@ -463,7 +451,7 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
                 self.db.collection("SexyRevolverData").document("Inventario").collection("Categorias").document(name).updateData([
                     "Imagen" : profileImageRef.fullPath])
                 { err in
-                    if let err = err {
+                    if let err : Error = err {
                         print("Error writing document: \(err)")
                     } else {
                         print("Document successfully written!")
@@ -479,22 +467,4 @@ class CategoriaVC: UIViewController, UIImagePickerControllerDelegate,UINavigatio
 
 
 
-extension UIViewController {
-    
-    
-    @objc func SwipeAction(swipe: UISwipeGestureRecognizer) {
-        
-        
-        switch swipe.direction.rawValue {
-        case 1:
-            navigationController?.popToRootViewController(animated: true)
-        case 2:
-            performSegue(withIdentifier: "gotoRight", sender: self)
-            
-        default:
-            break
-        }
-        
-    }
-    
-}
+

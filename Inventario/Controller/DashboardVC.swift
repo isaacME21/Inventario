@@ -28,18 +28,18 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
     
     @IBOutlet weak var QRBarButton: UIBarButtonItem!
     
-    let db = Firestore.firestore()
-    let barCode = CodigosDeBarras()
+    let db : Firestore = Firestore.firestore()
+    let barCode : CodigosDeBarras = CodigosDeBarras()
     
-    let picker = UIPickerView()
+    let picker : UIPickerView = UIPickerView()
     
     //MARK: VARIABLES PARA UISERACHBAR
-    var dataFiltered = [String]()
-    var items = [String]()
-    var isSearching = false
-    var itemsInfo = [item]()
+    var dataFiltered : [String] = [String]()
+    var items : [String] = [String]()
+    var isSearching : Bool = false
+    var itemsInfo : [item] = [item]()
     
-    var almacenes = [String]()
+    var almacenes : [String] = [String]()
     
     //MARK: REFRESH CONTROL
     lazy var refreshControl: UIRefreshControl = {
@@ -50,13 +50,7 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
         return refreshControl
     }()
     
-    class item{
-        var name = ""
-        var precioDeCompra : String?
-        var precioDeVenta : String?
-        var proovedores : String?
-        var imagen : UIImage?
-    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,12 +94,17 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
                                                name: NSNotification.Name("gotoTraspaso"),
                                                object: nil)
         
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(showReportes),
+                                               name: NSNotification.Name("gotoReportes"),
+                                               object: nil)
+        
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         SVProgressHUD.show(withStatus: "Cargando")
         DispatchQueue.global(qos: .background).async {
-            //(self.items,self.itemInfo) = self.firebase.load(Collection: "Clientes")
             self.load(Collection: "Articulos")
         }
         
@@ -113,9 +112,21 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
     
     override func viewWillAppear(_ animated: Bool) {
         let defaults = UserDefaults.standard
-        if let itemScann = defaults.object(forKey: "itemScann") as? String {
-            loadScann(item: itemScann)
-        }
+        guard let itemScann : String = defaults.object(forKey: "itemScann") as? String else {fatalError("error en itemScann")}
+        loadScann(item: itemScann)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("gotoConfiguracion"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("gotoCatProd"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("gotoProovedores"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("gotoClientes"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("gotoVisualizar"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("gotoAlmacen"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("gotoTraspaso"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("HideSideMenu"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("ToggleSideMenu"), object: nil)
+
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -125,13 +136,13 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
     
     
     @IBAction func generateQRCode(_ sender: Any) {
-        guard let imageQR = barCode.generateQRBarcode(from: nombre.text!) else {fatalError("No se encontro la imagen")}
+        guard let imageQR : UIImage = barCode.generateQRBarcode(from: nombre.text!) else {fatalError("No se encontro la imagen")}
         
-        let image = imageQR
-        let alert = UIAlertController(title: "\n\n\n\n\n\n\n\n\n\n", message: "", preferredStyle: .alert)
+        let image : UIImage = imageQR
+        let alert : UIAlertController = UIAlertController(title: "\n\n\n\n\n\n\n\n\n\n", message: "", preferredStyle: .alert)
         
-        let imgViewTitle = UIImageView(frame: CGRect(x: 8, y: 10, width: 250, height: 250))
-        imgViewTitle.image = image
+        let imgViewTitle : UIImageView = UIImageView(frame: CGRect(x: 8, y: 10, width: 250, height: 250))
+        imgViewTitle.image  = image
         
         alert.view.addSubview(imgViewTitle)
         
@@ -164,7 +175,7 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
+        let cell : UITableViewCell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
         
         
         
@@ -185,7 +196,7 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
         for x in itemsInfo{if x.name == items[indexPath.row]{ art = x}}
         
         if art != nil {
-            if let itemImage = art?.imagen{
+            if let itemImage : UIImage = art?.imagen{
                 imagen.image = itemImage
             }else{
                 imagen.image = UIImage(named: "MarcoFotoBlack")
@@ -195,8 +206,8 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
             precioDeVenta.text = art?.precioDeVenta ?? ""
             proovedor.text = art?.proovedores ?? ""
         }else{
-            let alert = UIAlertController(title: "No existe la categoria", message: nil, preferredStyle: .alert)
-            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            let alert : UIAlertController  = UIAlertController(title: "No existe la categoria", message: nil, preferredStyle: .alert)
+            let OKAction : UIAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(OKAction)
             
             self.present(alert, animated: true)
@@ -272,31 +283,34 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
     @objc func showTraspaso(){
         performSegue(withIdentifier: "gotoTraspaso", sender: nil)
     }
+    @objc func showReportes(){
+        performSegue(withIdentifier: "gotoReportes", sender: nil)
+    }
     
     //TODO: - Cargar informacion de Firebase
     func load(Collection: String) {
         items.removeAll()
         itemsInfo.removeAll()
         db.collection("SexyRevolverData").document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
                     self.items.append(document.documentID)
-                    let infoItem = document.data()
-                    let itemObj = item()
+                    let infoItem : [String : Any] = document.data()
+                    let itemObj : item = item()
                     itemObj.name = infoItem["Nombre"] as! String
                     itemObj.precioDeCompra = infoItem["Precio de Compra"] as? String
                     itemObj.precioDeVenta = infoItem["Precio de Venta"] as? String
                     itemObj.proovedores = infoItem["Proovedores"] as? String
 
                     
-                    let storageReference = Storage.storage().reference()
-                    let profileImageRef = storageReference.child("Articulos").child(document.documentID)
+                    let storageReference : StorageReference = Storage.storage().reference()
+                    let profileImageRef : StorageReference = storageReference.child("Articulos").child(document.documentID)
                     // Fetch the download URL
                     profileImageRef.downloadURL { url, error in
-                        if let error = error {
+                        if let error : Error = error {
                             // Handle any errors
                             print("Error took place \(error.localizedDescription)")
                         } else {
@@ -306,6 +320,7 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
                                 let imageData : NSData = try NSData(contentsOf: url!)
                                 itemObj.imagen = UIImage(data: imageData as Data)
                                 print("Se bajo la foto")
+                                SVProgressHUD.dismiss()
                             } catch {
                                 print(error)
                             }
@@ -315,7 +330,7 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
                     
                 }
                 self.db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").getDocuments { (QuerySnapshot, err) in
-                    if let err = err {
+                    if let err : Error = err {
                         print("Error getting documents: \(err)")
                     } else {
                         for document in QuerySnapshot!.documents {
@@ -324,7 +339,6 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
                         }
                     }
                     self.tabla.reloadData()
-                    SVProgressHUD.dismiss()
                 }
             }
         }
@@ -332,10 +346,10 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
     
     func loadItemsFrom(almacen : String, item : String) {
         db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(almacen).collection("Articulos").document(item).getDocument { (document, error) in
-            if let document = document, document.exists {
-                let dataDescription = document.data()
+            if let document : DocumentSnapshot = document, document.exists {
+                let dataDescription : [String : Any]? = document.data()
                 print("Document data: \(String(describing: dataDescription))")
-                let existencias = dataDescription!["Cantidad"] as! Int
+                let existencias : Int = dataDescription!["Cantidad"] as! Int
                 DispatchQueue.main.async {
                     self.Existencias.text = "\(existencias)"
                 }
@@ -347,13 +361,13 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
     
     func loadScann(item : String){
         db.collection("SexyRevolverData").document("Inventario").collection("Articulos").document(item).getDocument { (document, error) in
-            if let document = document, document.exists {
-                let dataDescription = document.data()
+            if let document : DocumentSnapshot = document, document.exists {
+                let dataDescription : [String : Any]? = document.data()
                 print("Document data: \(String(describing: dataDescription))")
-                let nombre = dataDescription!["Nombre"] as! String
-                let precioCompra = dataDescription!["Precio de Compra"] as! String
-                let precioVenta = dataDescription!["Precio de Venta"] as! String
-                let proovedor = dataDescription!["Proovedores"] as! String
+                let nombre : String = dataDescription!["Nombre"] as! String
+                let precioCompra : String = dataDescription!["Precio de Compra"] as! String
+                let precioVenta : String = dataDescription!["Precio de Venta"] as! String
+                let proovedor : String = dataDescription!["Proovedores"] as! String
                 DispatchQueue.main.async {
                     self.nombre.text = nombre
                     self.proovedor.text = proovedor

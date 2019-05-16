@@ -39,48 +39,36 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     
     @IBOutlet weak var saveButton: UIButton!
     
-    class articulo{
-        var name = ""
-        var atributos : String?
-        var beneficioBruto : String?
-        var categoria : String?
-        var impuestos : String?
-        var margen : String?
-        var precioDeCompra : String?
-        var precioDeVenta : String?
-        var proovedores : String?
-        var referencia : String?
-        var imagen : UIImage?
-    }
+
     
     
-    let db = Firestore.firestore()
-    let imagePicker = UIImagePickerController()
-    var barcode = CodigosDeBarras()
+    let db : Firestore = Firestore.firestore()
+    let imagePicker : UIImagePickerController = UIImagePickerController()
+    var barcode : CodigosDeBarras = CodigosDeBarras()
     
     //MARK: INICIALIZACION DE PICKERVIEWS
-    let catPicker = UIPickerView()
-    let proovedorPicker = UIPickerView()
-    let taxPicker = UIPickerView()
+    let catPicker : UIPickerView = UIPickerView()
+    let proovedorPicker : UIPickerView = UIPickerView()
+    let taxPicker : UIPickerView = UIPickerView()
     
     //MARK: ARRAYS DE PRUEBA
-    var categoriasArray = [String]()
-    var proovedoresArray = [String]()
-    let impuestosArray = ["10","16","20"]
-    var itemInfo = [articulo]()
+    var categoriasArray : [String] = [String]()
+    var proovedoresArray : [String] = [String]()
+    let impuestosArray : [String] = ["10","16","20"]
+    var itemInfo : [articulo] = [articulo]()
     
     
     //MARK: VARIABLES PARA UISERACHBAR
-    var dataFiltered = [String]()
-    var isSearching = false
-    var items = [String]()
+    var dataFiltered : [String] = [String]()
+    var isSearching : Bool = false
+    var items : [String] = [String]()
     
     
     let errorColor = UIColor.red
     
     //MARK: REFRESH CONTROL
     lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
+        let refreshControl : UIRefreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:#selector(ProductoVC.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refreshControl.tintColor = UIColor.blue
         
@@ -225,7 +213,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         saveButton.alpha = 0.5
     }
     @IBAction func cameraTapped(_ sender: UIButton) {
-        let alert = UIAlertController(title: "Escoge una Imagen", message: nil, preferredStyle: .actionSheet)
+        let alert : UIAlertController = UIAlertController(title: "Escoge una Imagen", message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = UIColor(red:0.82, green:0.64, blue:0.32, alpha:1.0)
         
         
@@ -239,15 +227,11 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         alert.addAction(UIAlertAction.init(title: "Cancelar", style: .cancel, handler: nil))
         
         //Establecer donde se va a mostrar la alerta
-        if let popoverController = alert.popoverPresentationController {
-            
-            popoverController.sourceView = self.view
-            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-            popoverController.permittedArrowDirections = []
-            
-            //popoverController.barButtonItem = sender as? UIBarButtonItem
-        }
+        guard let popoverController = alert.popoverPresentationController else { fatalError("Error en popOverController")}
         
+        popoverController.sourceView = self.view
+        popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+        popoverController.permittedArrowDirections = []
         
         present(alert, animated: true, completion: nil)
     }
@@ -289,17 +273,13 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     
     //MARK: TABLA DE ARTICULOS
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
         if isSearching {
             return dataFiltered.count
         }
         return items.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
-        
-        
+        let cell : UITableViewCell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
         
         if isSearching{
             cell.textLabel?.text = dataFiltered[indexPath.row]
@@ -317,7 +297,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         for x in itemInfo{if x.name == items[indexPath.row]{ art = x}}
         
         if art != nil {
-            if let itemImage = art?.imagen{
+            if let itemImage : UIImage = art?.imagen{
                 image.image = itemImage
             }else{
                 image.image = UIImage(named: "MarcoFotoBlack")
@@ -334,8 +314,8 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
             referencia.text = art?.referencia ?? ""
             validar()
         }else {
-            let alert = UIAlertController(title: "No existe el producto", message: nil, preferredStyle: .alert)
-            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            let alert : UIAlertController = UIAlertController(title: "No existe el producto", message: nil, preferredStyle: .alert)
+            let OKAction : UIAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(OKAction)
             
             self.present(alert, animated: true)
@@ -364,13 +344,9 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     //MARK: Metodo Importante
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
+        guard let userPickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else{fatalError("Error en userPickerImage")}
         
-        if let userPickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            print("se supone que se tiene que cambiar la imagen")
-            image.image = userPickedImage
-        }
-        
-        
+        image.image = userPickedImage
         imagePicker.dismiss(animated: true, completion: nil)
     }
     func openCamera(){
@@ -380,7 +356,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
             imagePicker.allowsEditing = true
             self.present(imagePicker, animated: true, completion: nil)
         }else{
-            let alert  = UIAlertController(title: "Advertencia", message: "No tienes Camara", preferredStyle: .alert)
+            let alert : UIAlertController  = UIAlertController(title: "Advertencia", message: "No tienes Camara", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             
             
@@ -435,8 +411,8 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         colorTextFields()
         borderTextFields1()
         
-        var listo = 0
-        var opcion:Int = 2
+        var listo : Int = 0
+        var opcion : Int = 2
         
         let textfields:[UITextField] = [referencia,nombre,categoria,atributos,impuestos,precioDeVenta,PrecioDeCompra,beneficoBruto,margen,proovedores]
         for x in textfields {
@@ -541,24 +517,24 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     }
     //MARK: CALCULAR PRECIO DE VENTA, MARGEN BRUTO Y PORCENTAJE BRUTO
     func precioVenta() -> Double{
-        let compra = (PrecioDeCompra.text! as NSString).doubleValue
-        let x = compra * 4.7
-        let Venta = Double(round(1000*x)/1000)
+        let compra : Double = (PrecioDeCompra.text! as NSString).doubleValue
+        let x : Double = compra * 4.7
+        let Venta : Double = Double(round(1000*x)/1000)
         return Venta
     }
     func margenBruto() -> Double{
-        let compra = (PrecioDeCompra.text! as NSString).doubleValue
-        let venta = compra * 4.7
-        let x = venta - compra
-        let margenBruto = Double(round(1000*x)/1000)
+        let compra : Double = (PrecioDeCompra.text! as NSString).doubleValue
+        let venta : Double = compra * 4.7
+        let x : Double = venta - compra
+        let margenBruto : Double = Double(round(1000*x)/1000)
         return margenBruto
     }
     func porcentajeBruto() -> Double{
-        let compra = (PrecioDeCompra.text! as NSString).doubleValue
-        let venta = compra * 4.7
-        let margenBruto = venta - compra
-        let x = margenBruto / venta
-        let porcentajeBruto = Double(round(1000*x)/1000)
+        let compra : Double = (PrecioDeCompra.text! as NSString).doubleValue
+        let venta : Double = compra * 4.7
+        let margenBruto : Double = venta - compra
+        let x : Double = margenBruto / venta
+        let porcentajeBruto : Double = Double(round(1000*x)/1000)
         return porcentajeBruto * 100
     }
     //MARK: BORRAR LOS TEXTFIELDS
@@ -629,9 +605,10 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
             "Precio de Compra": PrecioDeCompra.text!,
             "BeneficioBruto": beneficoBruto.text!,
             "Margen": margen.text!,
-            "Proovedores": proovedores.text!])
+            "Proovedores": proovedores.text!,
+            "Fecha" : Date()])
         { err in
-            if let err = err {
+            if let err : Error = err {
                 print("Error writing document: \(err)")
             } else {
                 print("Document successfully written!")
@@ -643,7 +620,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         }
         
         if image.image != UIImage(named: "MarcoFotoBlack") {
-            guard let imagenData = image.image?.jpegData(compressionQuality: 0.25) else { fatalError("Error al convertir la imagen") }
+            guard let imagenData : Data = image.image?.jpegData(compressionQuality: 0.25) else { fatalError("Error al convertir la imagen") }
             uploadProfileImage(imageData: imagenData, name: nombre.text!)
         }
         
@@ -653,14 +630,14 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         
         //MARK: CARGAR ARTICULOS
         db.collection("SexyRevolverData").document("Inventario").collection("Articulos").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
                     self.items.append(document.documentID)
-                    let infoItem = document.data()
-                    let item = articulo()
+                    let infoItem :  [String : Any] = document.data()
+                    let item : articulo = articulo()
                     item.name = infoItem["Nombre"] as! String
                     item.atributos = infoItem["Atributos"] as? String
                     item.beneficioBruto = infoItem["BeneficioBruto"] as? String
@@ -672,11 +649,11 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
                     item.proovedores = infoItem["Proovedores"] as? String
                     item.referencia = infoItem["Referencia"] as? String
                     
-                    let storageReference = Storage.storage().reference()
-                    let profileImageRef = storageReference.child("Articulos").child(document.documentID)
+                    let storageReference : StorageReference = Storage.storage().reference()
+                    let profileImageRef : StorageReference = storageReference.child("Articulos").child(document.documentID)
                     // Fetch the download URL
                     profileImageRef.downloadURL { url, error in
-                        if let error = error {
+                        if let error : Error = error {
                             // Handle any errors
                             print("Error took place \(error.localizedDescription)")
                         } else {
@@ -686,6 +663,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
                                 let imageData : NSData = try NSData(contentsOf: url!)
                                 item.imagen = UIImage(data: imageData as Data)
                                 print("Se bajo la foto")
+                                SVProgressHUD.dismiss()
                             } catch {
                                 print(error)
                             }
@@ -694,7 +672,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
                     self.itemInfo.append(item)
                 }
                 self.tabla.reloadData()
-                SVProgressHUD.dismiss()
+                
                 
                 
             }
@@ -702,7 +680,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         
         //MARK: CARGAR CATEGORIAS
         db.collection("SexyRevolverData").document("Inventario").collection("Categorias").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
@@ -718,7 +696,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
         
         //MARK: CARGAR PROOVEDORES
         db.collection("SexyRevolverData").document("Inventario").collection("Proovedores").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
@@ -734,15 +712,15 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     }
     func deleteFireStoreData(Documento : String)  {
         db.collection("SexyRevolverData").document("Inventario").collection("Articulos").document(Documento).delete { (err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error removing document: \(err)")
             } else {
                 print("Document successfully removed!")
-                let storageReference = Storage.storage().reference()
-                let profileImageRef = storageReference.child("Articulos").child(Documento)
+                let storageReference : StorageReference = Storage.storage().reference()
+                let profileImageRef : StorageReference = storageReference.child("Articulos").child(Documento)
                 //Removes image from storage
                 profileImageRef.delete { error in
-                    if let error = error {
+                    if let error : Error = error {
                         print(error)
                     } else {
                         print("File successfully removed!")
@@ -754,10 +732,10 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     
     
     func uploadProfileImage(imageData: Data , name : String){
-        let storageReference = Storage.storage().reference()
-        let profileImageRef = storageReference.child("Articulos").child(name)
+        let storageReference : StorageReference = Storage.storage().reference()
+        let profileImageRef : StorageReference = storageReference.child("Articulos").child(name)
         
-        let uploadMetaData = StorageMetadata()
+        let uploadMetaData : StorageMetadata = StorageMetadata()
         uploadMetaData.contentType = "image/jpeg"
         
         profileImageRef.putData(imageData, metadata: uploadMetaData) { (uploadedImageMeta, error) in

@@ -71,6 +71,8 @@
             <connections>
                 <outlet property="Articulo" destination="th7-1Y-aMG" id="sjD-tb-uYu"/>
                 <outlet property="Cantidad" destination="97Z-au-4t3" id="1oQ-zR-yFQ"/>
+                <outlet property="articuloUpLabel" destination="wcW-1C-adm" id="aCY-Xe-LxI"/>
+                <outlet property="cantidadUpLabel" destination="8dy-bT-7Ye" id="Ete-sH-izZ"/>
             </connections>
             <point key="canvasLocation" x="41.600000000000001" y="46.326836581709152"/>
         </tableViewCell>

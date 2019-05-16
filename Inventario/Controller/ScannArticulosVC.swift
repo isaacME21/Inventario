@@ -36,7 +36,7 @@ class ScannArticulosVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate
             return
         }
         
-        let metadataOutput = AVCaptureMetadataOutput()
+        let metadataOutput : AVCaptureMetadataOutput = AVCaptureMetadataOutput()
         
         if (captureSession.canAddOutput(metadataOutput)) {
             captureSession.addOutput(metadataOutput)
@@ -58,7 +58,7 @@ class ScannArticulosVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate
     
 
     func failed() {
-        let ac = UIAlertController(title: "Scanning not supported", message: "Your device does not support scanning a code from an item. Please use a device with a camera.", preferredStyle: .alert)
+        let ac : UIAlertController = UIAlertController(title: "Scanning not supported", message: "Your device does not support scanning a code from an item. Please use a device with a camera.", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         present(ac, animated: true)
         captureSession = nil
@@ -83,9 +83,9 @@ class ScannArticulosVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         captureSession.stopRunning()
         
-        if let metadataObject = metadataObjects.first {
-            guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
-            guard let stringValue = readableObject.stringValue else { return }
+        if let metadataObject : AVMetadataObject = metadataObjects.first {
+            guard let readableObject : AVMetadataMachineReadableCodeObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
+            guard let stringValue : String = readableObject.stringValue else { return }
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             found(code: stringValue)
         }
@@ -96,7 +96,7 @@ class ScannArticulosVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate
     //TODO: SE ENCONTRO EL CODIGO
     func found(code: String) {
         print(code)
-        let defaults = UserDefaults.standard
+        let defaults : UserDefaults = UserDefaults.standard
         defaults.set(code, forKey: "itemScann")
         navigationController?.popToRootViewController(animated: true)
     }

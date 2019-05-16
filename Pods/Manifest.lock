@@ -69,6 +69,7 @@ PODS:
     - FirebaseAuthInterop (~> 1.0)
     - FirebaseCore (~> 5.2)
     - GTMSessionFetcher/Core (~> 1.1)
+  - FSCalendar (2.8.0)
   - GoogleAppMeasurement (5.8.0):
     - GoogleUtilities/AppDelegateSwizzler (~> 5.2)
     - GoogleUtilities/MethodSwizzler (~> 5.2)
@@ -127,6 +128,7 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Firestore
   - Firebase/Storage
+  - FSCalendar
   - IQKeyboardManagerSwift
   - SVProgressHUD
 
@@ -142,6 +144,7 @@ SPEC REPOS:
     - FirebaseFirestore
     - FirebaseInstanceID
     - FirebaseStorage
+    - FSCalendar
     - GoogleAppMeasurement
     - GoogleUtilities
     - "gRPC-C++"
@@ -164,6 +167,7 @@ SPEC CHECKSUMS:
   FirebaseFirestore: 1531eefe02da66be6860966ac4e2cdac635706e2
   FirebaseInstanceID: cf488df2f4b79782f0e430b04a0e17c0aa7979b2
   FirebaseStorage: 6162ef4322502b818d9de0ec552f5226d283de43
+  FSCalendar: 3a5ed3636e2ba1b83ebebfcf0c2603105a6f5efe
   GoogleAppMeasurement: 1624046ab1bcc5e170061a56ef5679000b079c8e
   GoogleUtilities: 6481e6318c5fcabaaa8513ef8120f329055d7c10
   "gRPC-C++": e76441995900ac90e9bd98644ab4733f12521edf
@@ -175,6 +179,6 @@ SPEC CHECKSUMS:
   Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: e6864f55bfdf9954873a762745ab23b93134ebab
+PODFILE CHECKSUM: 2a319c2983ade4eba00a69f9aaf1b6529eda18be
 
 COCOAPODS: 1.5.3

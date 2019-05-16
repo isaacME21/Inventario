@@ -13,24 +13,14 @@ import SVProgressHUD
 
 class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, UISearchBarDelegate, UITextFieldDelegate {
     
-    
-    class articulo {
-        var nombre : String
-        var cantidad : Int = 1
-        
-        init(nombre : String) {
-            self.nombre = nombre
-        }
-    }
-    
-    
-    var dismissLoading = 0{
+
+    var dismissLoading : Int = 0{
         didSet{
             SVProgressHUD.dismiss()
         }
     }
     
-    var actualizarAlmacen1 = 0{
+    var actualizarAlmacen1 : Int = 0{
         didSet{
             //MARK: Actualizar y eliminar los datos del almacen que traspaso
             self.DeleteAndUpdate(Almacen: almacen.text!)
@@ -65,30 +55,30 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
     
     
     
-    var index = 0
-    var index2 = 0
-    var opcion = 1
+    var index : Int = 0
+    var index2 : Int = 0
+    var opcion : Int = 1
     
     
-    let db = Firestore.firestore()
-    let picker = UIPickerView()
+    let db : Firestore = Firestore.firestore()
+    let picker : UIPickerView = UIPickerView()
     
     //TODO: - VARIABLES PARA UISERACHBAR
-    var dataFiltered = [String]()
-    var isSearching = false
-    var dataFiltered2 = [String]()
-    var isSearching2 = false
+    var dataFiltered : [String] = [String]()
+    var isSearching : Bool = false
+    var dataFiltered2 : [String] = [String]()
+    var isSearching2 : Bool = false
     
     //MARK: VARIABLES PARA ALMACENAR INFORMACION
-    var Almacenes = [String]()
-    var AlmacenesInfo = [String : NSDictionary]()
-    var Articulos = [String]()
-    var ArticulosAlmacen1 = [articulo]()
-    var ArticulosAlmacen2 = [articulo]()
+    var Almacenes : [String] = [String]()
+    var AlmacenesInfo : [String : NSDictionary] = [String : NSDictionary]()
+    var Articulos : [String] = [String]()
+    var ArticulosAlmacen1 : [ArticuloInventario] = [ArticuloInventario]()
+    var ArticulosAlmacen2 : [ArticuloInventario] = [ArticuloInventario]()
     
     //MARK: REFRESH CONTROL
     lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
+        let refreshControl : UIRefreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:#selector(GestionInventarioVC.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refreshControl.tintColor = UIColor.blue
         
@@ -186,7 +176,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
         //MARK: ENTRADA
         if opcion == 1{
             if tableView == tabla{
-                let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomViewCell
+                let cell : CustomViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomViewCell
                 
                 if isSearching{
                     cell.Articulo.text = dataFiltered[indexPath.row]
@@ -200,7 +190,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
             
             
             if tableView == tabla2{
-                let cell = tableView.dequeueReusableCell(withIdentifier: "cell2", for: indexPath) as! CustomViewCell
+                let cell : CustomViewCell = tableView.dequeueReusableCell(withIdentifier: "cell2", for: indexPath) as! CustomViewCell
                 
                 cell.Articulo.text = ArticulosAlmacen1[indexPath.row].nombre
                 cell.Cantidad.text = String(ArticulosAlmacen1[indexPath.row].cantidad)
@@ -210,7 +200,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
         //MARK: SALIDA
         if opcion == 2{
             if tableView == tabla{
-                let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomViewCell
+                let cell : CustomViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomViewCell
                 
                 cell.Articulo.text = ArticulosAlmacen2[indexPath.row].nombre
                 cell.Cantidad.text = String(ArticulosAlmacen2[indexPath.row].cantidad)
@@ -219,7 +209,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
             
             
             if tableView == tabla2{
-                let cell = tableView.dequeueReusableCell(withIdentifier: "cell2", for: indexPath) as! CustomViewCell
+                let cell : CustomViewCell = tableView.dequeueReusableCell(withIdentifier: "cell2", for: indexPath) as! CustomViewCell
                 
                 cell.Articulo.text = ArticulosAlmacen1[indexPath.row].nombre
                 cell.Cantidad.text = String(ArticulosAlmacen1[indexPath.row].cantidad)
@@ -230,7 +220,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
         //MARK: TRASPASO
         if opcion == 3{
             if tableView == tabla{
-                let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomViewCell
+                let cell : CustomViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomViewCell
                 
                 cell.Articulo.text = ArticulosAlmacen2[indexPath.row].nombre
                 cell.Cantidad.text = String(ArticulosAlmacen2[indexPath.row].cantidad)
@@ -239,16 +229,13 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
             
             
             if tableView == tabla2{
-                let cell = tableView.dequeueReusableCell(withIdentifier: "cell2", for: indexPath) as! CustomViewCell
+                let cell : CustomViewCell = tableView.dequeueReusableCell(withIdentifier: "cell2", for: indexPath) as! CustomViewCell
                 
                 cell.Articulo.text = ArticulosAlmacen1[indexPath.row].nombre
                 cell.Cantidad.text = String(ArticulosAlmacen1[indexPath.row].cantidad)
                 return cell
             }
         }
-        
-        
-        
         
         return UITableViewCell()
         
@@ -270,7 +257,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
                 }
                 
                 if bandera == 0 {
-                    let enviarArticulo = articulo(nombre: Articulos[indexPath.row])
+                    let enviarArticulo : ArticuloInventario = ArticuloInventario(nombre: Articulos[indexPath.row])
                     ArticulosAlmacen1.append(enviarArticulo)
                     numArticulo.text = "\(enviarArticulo.cantidad)"
                     
@@ -302,7 +289,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
                 }
                 
                 if bandera == 0 {
-                    let enviarArticulo = articulo(nombre: Articulos[indexPath.row])
+                    let enviarArticulo : ArticuloInventario = ArticuloInventario(nombre: Articulos[indexPath.row])
                     ArticulosAlmacen1.append(enviarArticulo)
                     ArticulosAlmacen2[index2].cantidad = ArticulosAlmacen2[index2].cantidad - 1
                     numArticulo.text = "\(enviarArticulo.cantidad)"
@@ -371,14 +358,14 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
             
             
             if opcion == 1{
-                var cantidad = Int(numArticulo.text!)
+                var cantidad : Int? = Int(numArticulo.text!)
                 cantidad = cantidad! + 1
                 ArticulosAlmacen1[index].cantidad = cantidad!
                 numArticulo.text = "\(cantidad!)"
                 tabla2.reloadData()
             }else{
-                var cantidad = Int(numArticulo.text!)
-                let cantidad2  = ArticulosAlmacen2[index2].cantidad - 1
+                var cantidad : Int? = Int(numArticulo.text!)
+                let cantidad2 : Int  = ArticulosAlmacen2[index2].cantidad - 1
                 
                 if cantidad2 >= 0 {
                     cantidad = cantidad! + 1
@@ -397,7 +384,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
             print("Entro a la funcion")
             
             if opcion == 1 {
-                var cantidad = Int(numArticulo.text!)
+                var cantidad : Int? = Int(numArticulo.text!)
                 cantidad = cantidad! - 1
                 if cantidad! >= 0 {
                     ArticulosAlmacen1[index].cantidad = cantidad!
@@ -408,7 +395,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
                 }
                 
             }else{
-                var cantidad = Int(numArticulo.text!)
+                var cantidad : Int? = Int(numArticulo.text!)
                 cantidad = cantidad! - 1
                 if cantidad! >= 0 {
                     ArticulosAlmacen1[index].cantidad = cantidad!
@@ -429,7 +416,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
     }
     @IBAction func opciones(_ sender: UIBarButtonItem) {
         
-        let alert = UIAlertController(title: "Escoge una Opcion", message: nil, preferredStyle: .actionSheet)
+        let alert : UIAlertController = UIAlertController(title: "Seleccione una Opcion", message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = UIColor(red:0.82, green:0.64, blue:0.32, alpha:1.0)
         
         
@@ -447,16 +434,11 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
         alert.addAction(UIAlertAction.init(title: "Cancelar", style: .cancel, handler: nil))
         
         
-        if let popoverController = alert.popoverPresentationController {
-            popoverController.barButtonItem = sender
-        }
-        
+        guard let popoverController = alert.popoverPresentationController  else{ fatalError("Error en popoverController") }
+        popoverController.barButtonItem = sender
         
         present(alert, animated: true, completion: nil)
-        
-        
-        
-        
+
     }
     @IBAction func salir(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
@@ -464,8 +446,8 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
     @IBAction func Enviar(_ sender: UIButton) {
         
             if ArticulosAlmacen1.isEmpty == false {
-                let x = almacen.text!
-                let y = almacen2.text!
+                let x : String = almacen.text!
+                let y : String = almacen2.text!
                 if x == "" {alertInput() ;return}
                 if y == "" {alertInput() ;return}
                 
@@ -487,7 +469,6 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
                 }
             }
         }
-        alertInput()
     }
     
     //TODO: - FUNCIONES DEL MENU
@@ -529,7 +510,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
     //TODO: - Cargar informacion de Firebase
     func loadAlmacenes() {
         db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
@@ -545,7 +526,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
     
     func loadArticulos() {
         db.collection("SexyRevolverData").document("Inventario").collection("Articulos").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 self.Articulos.removeAll()
@@ -561,14 +542,14 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
     
     func loadOption2(Almacen : String)  {
             db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Almacen).collection("Articulos").getDocuments { (QuerySnapshot, err) in
-                if let err = err {
+                if let err : Error = err {
                     print("Error getting documents: \(err)")
                 } else {
                     self.ArticulosAlmacen2.removeAll()
                     for document in QuerySnapshot!.documents {
                         print("\(document.documentID) => \(document.data())")
-                        let data = document.data()
-                        let newArticulo = articulo(nombre: document.documentID)
+                        let data : [String : Any] = document.data()
+                        let newArticulo : ArticuloInventario = ArticuloInventario(nombre: document.documentID)
                         newArticulo.cantidad = data["Cantidad"] as! Int
                         self.ArticulosAlmacen2.append(newArticulo)
                 }
@@ -606,7 +587,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
             //MARK: BORRAR EL DOCUMENTO SI EL ARTICULO ESTA EN 0
             if item.cantidad == 0{
                 db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Almacen).collection("Articulos").document(item.nombre).delete() { err in
-                    if let err = err {
+                    if let err : Error = err {
                         print("Error removing document: \(err)")
                     } else {
                         print("Document successfully removed!")
@@ -617,7 +598,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
                 db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Almacen).collection("Articulos").document(item.nombre).setData([
                     "Cantidad":  item.cantidad
                 ]) { err in
-                    if let err = err {
+                    if let err : Error = err {
                         print("Error updating document: \(err)")
                     } else {
                         print("Document successfully updated")
@@ -629,9 +610,9 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
     
     //MARK: FUNCION PARA PEDIDOS EN ESPERA
     func PedidosEnEspera(Almacen1 : String, Almacen2 : String){
-        var dict = [String : AnyObject]()
-        var articulos2 = [Int]()
-        var articulosOrden2 = [String]()
+        var dict : [String : AnyObject] = [String : AnyObject]()
+        var articulos2 : [Int] = [Int]()
+        var articulosOrden2 : [String] = [String]()
         
         for item2 in ArticulosAlmacen1{
             articulos2.append(item2.cantidad)
@@ -643,10 +624,11 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
         dict["Fecha"] = Date() as AnyObject
         dict["Almacen 1"] = Almacen1 as AnyObject
         dict["Almacen 2"] = Almacen2 as AnyObject
+        dict["Activo"] = true as AnyObject
         
         //MARK: ACTUALIZAR LOS DOCUMENTOS
         db.collection("Pedidos En Espera").addDocument(data: dict) { err in
-            if let err = err {
+            if let err : Error = err {
                 print("Error updating document: \(err)")
             } else {
                 print("Document successfully updated")
@@ -656,18 +638,18 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
     
     //MARK: En este metodo se actualiza el almacen 2 y dependiendo de la opcion que se encuentre en el momento, tambien actualizara el almacen 1
     func ActualizarAlmacen2(Almacen2 : String)  {
-        var articulos = [String:Int]()
+        var articulos : [String : Int] = [String:Int]()
         
         db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Almacen2).collection("Articulos").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     print("\(document.documentID) => \(document.data())")
-                    let data = document.data()
+                    let data : [String : Any] = document.data()
                     self.Articulos.append(document.documentID)
                     
-                    let cantidad = data["Cantidad"] as! Int
+                    let cantidad : Int = data["Cantidad"] as! Int
                     articulos[document.documentID] = cantidad
                 }
                 
@@ -676,7 +658,7 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
                     self.db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Almacen2).collection("Articulos").document(item.nombre).setData([
                         "Cantidad":  articulos[item.nombre] == nil ? item.cantidad  : (item.cantidad + articulos[item.nombre]!)
                     ]) { err in
-                        if let err = err {
+                        if let err : Error = err {
                             print("Error updating document: \(err)")
                         } else {
                             print("Document successfully updated")
@@ -698,12 +680,5 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
 
 }
 
-extension UIViewController{
-    //TODO: ALERTAS PARA VERIFICACION
-    func alertInput()  {
-        let alert = UIAlertController(title: "Error", message: "Algunos de los campos estan vacios" , preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-        self.present(alert, animated: true)
-    }
-}
+
 

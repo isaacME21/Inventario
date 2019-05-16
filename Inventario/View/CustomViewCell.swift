@@ -13,6 +13,8 @@ class CustomViewCell: UITableViewCell {
 
     @IBOutlet weak var Articulo: UILabel!
     @IBOutlet weak var Cantidad: UILabel!
+    @IBOutlet weak var articuloUpLabel: UILabel!
+    @IBOutlet weak var cantidadUpLabel: UILabel!
     
     
     override func awakeFromNib() {

@@ -17,6 +17,7 @@
 		730FA044226F928D00A606D1 /* Visualizar.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 730FA043226F928D00A606D1 /* Visualizar.storyboard */; };
 		730FA047226F935E00A606D1 /* Almacen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 730FA046226F935E00A606D1 /* Almacen.storyboard */; };
 		730FA04A226F93F200A606D1 /* Traspaso.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 730FA049226F93F200A606D1 /* Traspaso.storyboard */; };
+		731F2D772288CBE0001B4808 /* ViewControllerMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731F2D762288CBE0001B4808 /* ViewControllerMethods.swift */; };
 		7321FD702265039F00EA41CE /* AlertController+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7321FD6F2265039F00EA41CE /* AlertController+Image.swift */; };
 		7321FD722265056D00EA41CE /* UIImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7321FD712265056D00EA41CE /* UIImage+Resize.swift */; };
 		7321FD7422650D7200EA41CE /* UIAlertAction+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7321FD7322650D7200EA41CE /* UIAlertAction+Image.swift */; };
@@ -31,8 +32,13 @@
 		733B429D226FE95D00B876FB /* CustomTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 733B429B226FE95D00B876FB /* CustomTableViewCell.xib */; };
 		7344750A2194A4F20054AEB7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 734475092194A4F10054AEB7 /* GoogleService-Info.plist */; };
 		7347A08F22737A4500317A7B /* TraspasoEnEsperaVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7347A08E22737A4500317A7B /* TraspasoEnEsperaVC.swift */; };
+		73559274228C95F0003DD1E6 /* StardEndDates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73559273228C95EF003DD1E6 /* StardEndDates.swift */; };
+		73559276228C9D80003DD1E6 /* ReporteItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73559275228C9D80003DD1E6 /* ReporteItem.swift */; };
 		735BCC4E2190B93100EC8710 /* CategoriaVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735BCC4D2190B93100EC8710 /* CategoriaVC.swift */; };
 		735BCC502190B95100EC8710 /* ProductoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735BCC4F2190B95100EC8710 /* ProductoVC.swift */; };
+		73629BCB22863A4F00FA47E9 /* item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73629BCA22863A4F00FA47E9 /* item.swift */; };
+		73629BCD2286488100FA47E9 /* categoriaClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73629BCC2286488100FA47E9 /* categoriaClass.swift */; };
+		73629BCF22864E2400FA47E9 /* articulo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73629BCE22864E2400FA47E9 /* articulo.swift */; };
 		736BA71F218CCA1F0058CCE1 /* MenuTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736BA71E218CCA1F0058CCE1 /* MenuTVC.swift */; };
 		736DE9A821851932007EC5DE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736DE9A721851932007EC5DE /* AppDelegate.swift */; };
 		736DE9AD21851932007EC5DE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 736DE9AB21851932007EC5DE /* Main.storyboard */; };
@@ -47,7 +53,12 @@
 		73882350218A2C190051D7A3 /* ConfigurationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7388234F218A2C180051D7A3 /* ConfigurationVC.swift */; };
 		7398F7E621C345CD00D1D6B4 /* ClientesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7398F7E521C345CD00D1D6B4 /* ClientesVC.swift */; };
 		7398F7E821C4696600D1D6B4 /* FuncionesFirebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7398F7E721C4696600D1D6B4 /* FuncionesFirebase.swift */; };
+		73A8B30C2288FE2F0038C1D9 /* Reportes.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73A8B30B2288FE2F0038C1D9 /* Reportes.storyboard */; };
+		73A8B30E228903900038C1D9 /* ReportesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A8B30D228903900038C1D9 /* ReportesVC.swift */; };
 		73A912EE21BF4C3F00D3CF68 /* ProovedoresVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A912ED21BF4C3F00D3CF68 /* ProovedoresVC.swift */; };
+		73B612A9228781D6009E710D /* proovedor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B612A8228781D6009E710D /* proovedor.swift */; };
+		73B612AB22879004009E710D /* ArticuloInventario.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B612AA22879004009E710D /* ArticuloInventario.swift */; };
+		73B612AD228794D4009E710D /* Pedido.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B612AC228794D4009E710D /* Pedido.swift */; };
 		73B6E0942263BCC90073D7A2 /* ScannArticulosVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B6E0932263BCC90073D7A2 /* ScannArticulosVC.swift */; };
 		73B6E0962263BE730073D7A2 /* DashboardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B6E0952263BE730073D7A2 /* DashboardVC.swift */; };
 		73BCA4EE21E519310006530C /* GestionInventarioVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BCA4ED21E519310006530C /* GestionInventarioVC.swift */; };
@@ -64,6 +75,7 @@
 		730FA043226F928D00A606D1 /* Visualizar.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Visualizar.storyboard; sourceTree = "<group>"; };
 		730FA046226F935E00A606D1 /* Almacen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Almacen.storyboard; sourceTree = "<group>"; };
 		730FA049226F93F200A606D1 /* Traspaso.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Traspaso.storyboard; sourceTree = "<group>"; };
+		731F2D762288CBE0001B4808 /* ViewControllerMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerMethods.swift; sourceTree = "<group>"; };
 		7321FD6F2265039F00EA41CE /* AlertController+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertController+Image.swift"; sourceTree = "<group>"; };
 		7321FD712265056D00EA41CE /* UIImage+Resize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Resize.swift"; sourceTree = "<group>"; };
 		7321FD7322650D7200EA41CE /* UIAlertAction+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertAction+Image.swift"; sourceTree = "<group>"; };
@@ -78,8 +90,13 @@
 		733B429B226FE95D00B876FB /* CustomTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomTableViewCell.xib; sourceTree = "<group>"; };
 		734475092194A4F10054AEB7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7347A08E22737A4500317A7B /* TraspasoEnEsperaVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraspasoEnEsperaVC.swift; sourceTree = "<group>"; };
+		73559273228C95EF003DD1E6 /* StardEndDates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StardEndDates.swift; sourceTree = "<group>"; };
+		73559275228C9D80003DD1E6 /* ReporteItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReporteItem.swift; sourceTree = "<group>"; };
 		735BCC4D2190B93100EC8710 /* CategoriaVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriaVC.swift; sourceTree = "<group>"; };
 		735BCC4F2190B95100EC8710 /* ProductoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductoVC.swift; sourceTree = "<group>"; };
+		73629BCA22863A4F00FA47E9 /* item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = item.swift; sourceTree = "<group>"; };
+		73629BCC2286488100FA47E9 /* categoriaClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = categoriaClass.swift; sourceTree = "<group>"; };
+		73629BCE22864E2400FA47E9 /* articulo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = articulo.swift; sourceTree = "<group>"; };
 		736BA71E218CCA1F0058CCE1 /* MenuTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuTVC.swift; sourceTree = "<group>"; };
 		736DE9A421851932007EC5DE /* Inventario.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inventario.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		736DE9A721851932007EC5DE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -96,7 +113,12 @@
 		7388234F218A2C180051D7A3 /* ConfigurationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationVC.swift; sourceTree = "<group>"; };
 		7398F7E521C345CD00D1D6B4 /* ClientesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientesVC.swift; sourceTree = "<group>"; };
 		7398F7E721C4696600D1D6B4 /* FuncionesFirebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuncionesFirebase.swift; sourceTree = "<group>"; };
+		73A8B30B2288FE2F0038C1D9 /* Reportes.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Reportes.storyboard; sourceTree = "<group>"; };
+		73A8B30D228903900038C1D9 /* ReportesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportesVC.swift; sourceTree = "<group>"; };
 		73A912ED21BF4C3F00D3CF68 /* ProovedoresVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProovedoresVC.swift; sourceTree = "<group>"; };
+		73B612A8228781D6009E710D /* proovedor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = proovedor.swift; sourceTree = "<group>"; };
+		73B612AA22879004009E710D /* ArticuloInventario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticuloInventario.swift; sourceTree = "<group>"; };
+		73B612AC228794D4009E710D /* Pedido.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pedido.swift; sourceTree = "<group>"; };
 		73B6E0932263BCC90073D7A2 /* ScannArticulosVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannArticulosVC.swift; sourceTree = "<group>"; };
 		73B6E0952263BE730073D7A2 /* DashboardVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardVC.swift; sourceTree = "<group>"; };
 		73BCA4ED21E519310006530C /* GestionInventarioVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestionInventarioVC.swift; sourceTree = "<group>"; };
@@ -171,6 +193,15 @@
 				733B4294226FE6F800B876FB /* CustomSegmentedControl.swift */,
 				733B4296226FE6FA00B876FB /* GifUIImageView.swift */,
 				733B4295226FE6F900B876FB /* RoundedImage.swift */,
+				73629BCA22863A4F00FA47E9 /* item.swift */,
+				73629BCC2286488100FA47E9 /* categoriaClass.swift */,
+				73629BCE22864E2400FA47E9 /* articulo.swift */,
+				73B612A8228781D6009E710D /* proovedor.swift */,
+				73B612AA22879004009E710D /* ArticuloInventario.swift */,
+				73B612AC228794D4009E710D /* Pedido.swift */,
+				731F2D762288CBE0001B4808 /* ViewControllerMethods.swift */,
+				73559273228C95EF003DD1E6 /* StardEndDates.swift */,
+				73559275228C9D80003DD1E6 /* ReporteItem.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -186,6 +217,7 @@
 				730FA043226F928D00A606D1 /* Visualizar.storyboard */,
 				730FA046226F935E00A606D1 /* Almacen.storyboard */,
 				730FA049226F93F200A606D1 /* Traspaso.storyboard */,
+				73A8B30B2288FE2F0038C1D9 /* Reportes.storyboard */,
 				736DE9B321851937007EC5DE /* LaunchScreen.storyboard */,
 				7325FC932203B7AC009EA072 /* CustomViewCell.swift */,
 				7325FC942203B7AC009EA072 /* CustomViewCell.xib */,
@@ -213,6 +245,7 @@
 				7371798C21DECEA200B05EE2 /* CrearAlmacenVC.swift */,
 				73BCA4ED21E519310006530C /* GestionInventarioVC.swift */,
 				7347A08E22737A4500317A7B /* TraspasoEnEsperaVC.swift */,
+				73A8B30D228903900038C1D9 /* ReportesVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -309,6 +342,7 @@
 				7325FC962203B7AC009EA072 /* CustomViewCell.xib in Resources */,
 				730FA038226F8E0B00A606D1 /* Configuracion.storyboard in Resources */,
 				7388234E218A23CA0051D7A3 /* configuration-with-gear.png in Resources */,
+				73A8B30C2288FE2F0038C1D9 /* Reportes.storyboard in Resources */,
 				730FA03B226F8FA500A606D1 /* CatProd.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -326,6 +360,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Inventario/Pods-Inventario-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/FSCalendar/FSCalendar.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework",
@@ -341,6 +376,7 @@
 			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl_grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FSCalendar.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IQKeyboardManagerSwift.framework",
@@ -387,6 +423,7 @@
 			files = (
 				7371798B21DECC1B00B05EE2 /* AlmacenVC.swift in Sources */,
 				735BCC4E2190B93100EC8710 /* CategoriaVC.swift in Sources */,
+				73629BCF22864E2400FA47E9 /* articulo.swift in Sources */,
 				733B4298226FE6FA00B876FB /* RoundedImage.swift in Sources */,
 				730FA035226F83CB00A606D1 /* ContainerVC.swift in Sources */,
 				7398F7E821C4696600D1D6B4 /* FuncionesFirebase.swift in Sources */,
@@ -394,23 +431,32 @@
 				7371798D21DECEA200B05EE2 /* CrearAlmacenVC.swift in Sources */,
 				733B4299226FE6FA00B876FB /* GifUIImageView.swift in Sources */,
 				73B6E0942263BCC90073D7A2 /* ScannArticulosVC.swift in Sources */,
+				73B612A9228781D6009E710D /* proovedor.swift in Sources */,
 				73BCA4EE21E519310006530C /* GestionInventarioVC.swift in Sources */,
 				7325FC952203B7AC009EA072 /* CustomViewCell.swift in Sources */,
 				73A912EE21BF4C3F00D3CF68 /* ProovedoresVC.swift in Sources */,
 				73B6E0962263BE730073D7A2 /* DashboardVC.swift in Sources */,
 				737296782194EE7C00832591 /* LogInVC.swift in Sources */,
+				73B612AB22879004009E710D /* ArticuloInventario.swift in Sources */,
 				7398F7E621C345CD00D1D6B4 /* ClientesVC.swift in Sources */,
 				735BCC502190B95100EC8710 /* ProductoVC.swift in Sources */,
 				7347A08F22737A4500317A7B /* TraspasoEnEsperaVC.swift in Sources */,
+				73A8B30E228903900038C1D9 /* ReportesVC.swift in Sources */,
 				7321FD7422650D7200EA41CE /* UIAlertAction+Image.swift in Sources */,
+				73629BCD2286488100FA47E9 /* categoriaClass.swift in Sources */,
 				7321FD722265056D00EA41CE /* UIImage+Resize.swift in Sources */,
 				733B429C226FE95D00B876FB /* CustomTableViewCell.swift in Sources */,
+				73559274228C95F0003DD1E6 /* StardEndDates.swift in Sources */,
 				736BA71F218CCA1F0058CCE1 /* MenuTVC.swift in Sources */,
 				736DE9A821851932007EC5DE /* AppDelegate.swift in Sources */,
 				730FA033226F83A900A606D1 /* MenuVC.swift in Sources */,
 				7321FD702265039F00EA41CE /* AlertController+Image.swift in Sources */,
+				73559276228C9D80003DD1E6 /* ReporteItem.swift in Sources */,
 				736DE9B021851932007EC5DE /* Inventario.xcdatamodeld in Sources */,
+				73629BCB22863A4F00FA47E9 /* item.swift in Sources */,
+				73B612AD228794D4009E710D /* Pedido.swift in Sources */,
 				73882350218A2C190051D7A3 /* ConfigurationVC.swift in Sources */,
+				731F2D772288CBE0001B4808 /* ViewControllerMethods.swift in Sources */,
 				7370588721A9FCF40018EAB4 /* CodigosDeBarras.swift in Sources */,
 				733B4297226FE6FA00B876FB /* CustomSegmentedControl.swift in Sources */,
 			);

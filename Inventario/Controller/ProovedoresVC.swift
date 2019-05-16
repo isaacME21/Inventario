@@ -35,26 +35,12 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
     @IBOutlet weak var CP: UITextField!
     
     @IBOutlet weak var saveButton: UIButton!
-    
-    class proovedor{
-        var name = ""
-        var ID : String?
-        var apellido : String?
-        var email : String?
-        var telefono1 : String?
-        var telefono2 : String?
-        var direccion1 : String?
-        var direccion2 : String?
-        var ciudad : String?
-        var pais : String?
-        var CP: String?
-    }
-    
-    let db = Firestore.firestore()
+
+    let db : Firestore = Firestore.firestore()
     
     //MARK: REFRESH CONTROL
     lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
+        let refreshControl : UIRefreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:#selector(ProovedoresVC.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refreshControl.tintColor = UIColor.blue
         
@@ -62,10 +48,10 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
     }()
     
     //MARK: VARIABLES PARA UISERACHBAR
-    var dataFiltered = [String]()
-    var isSearching = false
-    var items = [String]()
-    var itemInfo = [proovedor]()
+    var dataFiltered : [String] = [String]()
+    var isSearching : Bool = false
+    var items : [String] = [String]()
+    var itemInfo : [proovedor] = [proovedor]()
     
     
     
@@ -124,7 +110,6 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
         dismiss(animated: true, completion: nil)
     }
     @IBAction func BorrarProovedor(_ sender: UIBarButtonItem) {
-        
         if proovedorID.text?.isEmpty == false {
             deleteFireStoreData(Documento: proovedorID.text!)
             saveButton.isUserInteractionEnabled = false
@@ -187,7 +172,7 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
+        let cell : UITableViewCell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
     
         if isSearching{ cell.textLabel?.text = dataFiltered[indexPath.row] }
         else { cell.textLabel?.text = items[indexPath.row] }
@@ -214,8 +199,8 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
             CP.text = proove?.CP ?? ""
             validar()
         }else {
-            let alert = UIAlertController(title: "No existe el proovedor", message: nil, preferredStyle: .alert)
-            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            let alert : UIAlertController = UIAlertController(title: "No existe el proovedor", message: nil, preferredStyle: .alert)
+            let OKAction : UIAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(OKAction)
             
             self.present(alert, animated: true)
@@ -251,31 +236,31 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
         if textField == telefono1 {
-            let caracteresPermitidos = CharacterSet.decimalDigits
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.decimalDigits
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
         if textField == telefono2 {
-            let caracteresPermitidos = CharacterSet.decimalDigits
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.decimalDigits
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
         if textField == CP {
-            let caracteresPermitidos = CharacterSet.decimalDigits
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.decimalDigits
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
         if textField == email {
-            let caracteresPermitidos = CharacterSet.init(charactersIn: "abcdefghijklmnñopqrstuvwxyz@.")
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.init(charactersIn: "abcdefghijklmnñopqrstuvwxyz@.")
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
-        let caracteresPermitidos = CharacterSet.init(charactersIn: "abcdefghijklmnopqrstuvwxyz1234567890.,- ")
-        let characterSet = CharacterSet(charactersIn: string)
+        let caracteresPermitidos : CharacterSet = CharacterSet.init(charactersIn: "abcdefghijklmnopqrstuvwxyz1234567890.,- ")
+        let characterSet : CharacterSet = CharacterSet(charactersIn: string)
         return caracteresPermitidos.isSuperset(of: characterSet)
         
     }
@@ -313,7 +298,7 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
     //MARK: METODOS DE FIRESTORE
     
     func save()  {
-        var data = [String : Any]()
+        var data : [String : Any] = [String : Any]()
         data["ID"] = proovedorID.text!
         data["Nombre"] = nombre.text ?? ""
         data["Apellido"] = apellido.text ?? ""
@@ -325,12 +310,13 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
         data["Ciudad"] = ciudad.text ?? ""
         data["Pais"] = pais.text ?? ""
         data["CP"] = CP.text ?? ""
+        data["Fecha"] = Date()
         
         
         
         db.collection("SexyRevolverData").document("Inventario").collection("Proovedores").document(proovedorID.text!).setData(data)
         { err in
-            if let err = err {
+            if let err : Error = err {
                 print("Error writing document: \(err)")
             } else {
                 print("Document successfully written!")
@@ -346,14 +332,14 @@ class ProovedoresVC: UIViewController, UITextFieldDelegate, UITableViewDelegate,
         
         //MARK: CARGAR PROOVEDORES
         db.collection("SexyRevolverData").document("Inventario").collection("Proovedores").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
                     self.items.append(document.documentID)
-                    let infoItem = document.data()
-                    let item = proovedor()
+                    let infoItem :  [String : Any] = document.data()
+                    let item : proovedor = proovedor()
                     item.name = infoItem["Nombre"] as! String
                     item.apellido = infoItem["Aoellido"] as? String
                     item.ID = infoItem["ID"] as? String

@@ -14,20 +14,9 @@ class TraspasoEnEsperaVC: UIViewController,UITableViewDelegate, UITableViewDataS
     
 
     @IBOutlet weak var tabla: UITableView!
-    let db = Firestore.firestore()
-
-    let months = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEPT","OCT","NOV","DEC"]
-    
-    class Pedido{
-        var almacen1 = ""
-        var almacen2 = ""
-        var fecha = Date()
-        var articulos = [Int]()
-        var articulosorden = [String]()
-        var id = ""
-    }
-    
-    var Pedidos = [Pedido]()
+    let db : Firestore = Firestore.firestore()
+    let months : [String] = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEPT","OCT","NOV","DEC"]
+    var Pedidos : [Pedido] = [Pedido]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,11 +32,11 @@ class TraspasoEnEsperaVC: UIViewController,UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let calendario = Calendar(identifier: .gregorian)
-        let month = calendario.component(.month, from: Pedidos[indexPath.row].fecha)
-        let day = calendario.component(.day, from: Pedidos[indexPath.row].fecha)
+        let calendario : Calendar = Calendar(identifier: .gregorian)
+        let month : Int = calendario.component(.month, from: Pedidos[indexPath.row].fecha)
+        let day : Int = calendario.component(.day, from: Pedidos[indexPath.row].fecha)
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
+        let cell : CustomTableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
         cell.upLabel.text = "ID"
         cell.downLabel.text = Pedidos[indexPath.row].id
         cell.downLabel.minimumScaleFactor = 0.7
@@ -59,14 +48,14 @@ class TraspasoEnEsperaVC: UIViewController,UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let pedido = Pedidos[indexPath.row]
-        var pedidoText = ""
+        let pedido : Pedido = Pedidos[indexPath.row]
+        var pedidoText : String = ""
         
         for (index, x) in pedido.articulosorden.enumerated(){
             pedidoText = pedidoText + "\n\(x) -> \(pedido.articulos[index])"
         }
         
-        let alert = UIAlertController(title: "Detalles del pedido", message: pedidoText , preferredStyle: .alert)
+        let alert : UIAlertController = UIAlertController(title: "Detalles del pedido", message: pedidoText , preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         self.present(alert, animated: true)
         
@@ -74,14 +63,14 @@ class TraspasoEnEsperaVC: UIViewController,UITableViewDelegate, UITableViewDataS
     
     //Mark: SwipeAction en la derecha
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let delete = deleteAction(at: indexPath)
+        let delete : UIContextualAction = deleteAction(at: indexPath)
         return UISwipeActionsConfiguration(actions: [delete])
     }
     
     
     
     func deleteAction(at indexPath: IndexPath) -> UIContextualAction{
-        let action = UIContextualAction(style: .destructive, title: "delete") { (action, view, completion) in
+        let action : UIContextualAction = UIContextualAction(style: .destructive, title: "delete") { (action, view, completion) in
             self.UpdateAlmacen(Almacen: self.Pedidos[indexPath.row].almacen1, Pedido: self.Pedidos[indexPath.row])
             completion(true)
         }
@@ -93,13 +82,13 @@ class TraspasoEnEsperaVC: UIViewController,UITableViewDelegate, UITableViewDataS
     
     //MARK: SwipeAction a la izquierda
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let complete = completeAction(at: indexPath)
+        let complete : UIContextualAction  = completeAction(at: indexPath)
         return UISwipeActionsConfiguration(actions: [complete])
     }
     
     
     func completeAction(at indexPath: IndexPath) -> UIContextualAction {
-        let action = UIContextualAction(style: .destructive, title: "ReAgendar") { (action, view, completion) in
+        let action : UIContextualAction = UIContextualAction(style: .destructive, title: "ReAgendar") { (action, view, completion) in
             self.UpdateAlmacen(Almacen: self.Pedidos[indexPath.row].almacen2, Pedido: self.Pedidos[indexPath.row])
             completion(true)
         }
@@ -114,32 +103,36 @@ class TraspasoEnEsperaVC: UIViewController,UITableViewDelegate, UITableViewDataS
     func load(){
         Pedidos.removeAll()
         db.collection("Pedidos En Espera").getDocuments { (querySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in querySnapshot!.documents {
                     //print("\(document.documentID) => \(document.data())")
-                    let data = document.data()
-                    let orden = Pedido()
-                    let fecha = data["Fecha"] as! Timestamp
+                    let data : [String : Any] = document.data()
+                    let activo = data["Activo"] as! Bool
                     
-                    let brookenArticulos = (data["Articulos"] as! NSMutableArray)
-                    let brookenOrdenArticulos = (data["ArticuloOrden"] as! NSMutableArray)
-                    
-                    var articulosFixed = [Int]()
-                    var articulosOrdenFixed = [String]()
-                    
-                    for x in brookenArticulos{articulosFixed.append(x as! Int)}
-                    for y in brookenOrdenArticulos{articulosOrdenFixed.append(y as! String)}
-                    
-                    orden.almacen1 = data["Almacen 1"] as! String
-                    orden.almacen2 = data["Almacen 2"] as! String
-                    orden.articulos = articulosFixed
-                    orden.articulosorden = articulosOrdenFixed
-                    orden.fecha = fecha.dateValue()
-                    orden.id = document.documentID
-                    
-                    self.Pedidos.append(orden)
+                    if activo == true{
+                        let orden : Pedido = Pedido()
+                        let fecha : Timestamp = data["Fecha"] as! Timestamp
+                        
+                        let brookenArticulos : NSMutableArray = (data["Articulos"] as! NSMutableArray)
+                        let brookenOrdenArticulos : NSMutableArray = (data["ArticuloOrden"] as! NSMutableArray)
+                        
+                        var articulosFixed : [Int] = [Int]()
+                        var articulosOrdenFixed : [String] = [String]()
+                        
+                        for x in brookenArticulos{articulosFixed.append(x as! Int)}
+                        for y in brookenOrdenArticulos{articulosOrdenFixed.append(y as! String)}
+                        
+                        orden.almacen1 = data["Almacen 1"] as! String
+                        orden.almacen2 = data["Almacen 2"] as! String
+                        orden.articulos = articulosFixed
+                        orden.articulosorden = articulosOrdenFixed
+                        orden.fecha = fecha.dateValue()
+                        orden.id = document.documentID
+                        
+                        self.Pedidos.append(orden)
+                    }
                 }
                 self.tabla.reloadData()
             }
@@ -148,16 +141,16 @@ class TraspasoEnEsperaVC: UIViewController,UITableViewDelegate, UITableViewDataS
     
     //MARK: Actualiza el almacen 1 o 2
     func UpdateAlmacen(Almacen : String, Pedido : Pedido){
-        var articulos = [String:Int]()
+        var articulos : [String : Int] = [String:Int]()
         
         db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Almacen).collection("Articulos").getDocuments { (QuerySnapshot, err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
                     print("\(document.documentID) => \(document.data())")
-                    let data = document.data()
-                    let cantidad = data["Cantidad"] as! Int
+                    let data : [String : Any] = document.data()
+                    let cantidad : Int = data["Cantidad"] as! Int
                     articulos[document.documentID] = cantidad
                 }
                 //MARK: Se actualizan la cantidad de articulos del almacen a enviar
@@ -165,7 +158,7 @@ class TraspasoEnEsperaVC: UIViewController,UITableViewDelegate, UITableViewDataS
                     self.db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Almacen).collection("Articulos").document(item).setData([
                         "Cantidad":  articulos[item] == nil ? Pedido.articulos[index]  : (Pedido.articulos[index] + articulos[item]!)
                     ]) { err in
-                        if let err = err {
+                        if let err : Error = err {
                             print("Error updating document: \(err)")
                         } else {
                             print("Document successfully updated")
@@ -178,8 +171,10 @@ class TraspasoEnEsperaVC: UIViewController,UITableViewDelegate, UITableViewDataS
     }
     
     func borrarPedidoEnEspera(id : String){
-        db.collection("Pedidos En Espera").document(id).delete() { err in
-            if let err = err {
+        db.collection("Pedidos En Espera").document(id).updateData([
+            "Activo": false
+        ]){ err in
+            if let err : Error = err {
                 print("Error removing document: \(err)")
             } else {
                 print("Document successfully removed!")

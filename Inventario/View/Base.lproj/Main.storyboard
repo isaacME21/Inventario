@@ -214,6 +214,23 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="vcZ-mA-wsH" style="IBUITableViewCellStyleDefault" id="3I7-M8-6j6">
+                                        <rect key="frame" x="0.0" y="308" width="300" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="3I7-M8-6j6" id="QFT-sC-y51">
+                                            <rect key="frame" x="0.0" y="0.0" width="300" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Reportes" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="vcZ-mA-wsH">
+                                                    <rect key="frame" x="16" y="0.0" width="268" height="43.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -398,6 +415,7 @@
                         <segue destination="XwQ-5w-Nlg" kind="presentation" identifier="gotoVisualizar" id="5OZ-gn-mhb"/>
                         <segue destination="8cJ-Hc-az7" kind="presentation" identifier="gotoAlmacen" id="f1Q-Te-J6A"/>
                         <segue destination="W0Q-pA-UTZ" kind="presentation" identifier="gotoTraspaso" id="7BO-hc-W76"/>
+                        <segue destination="7Mu-tY-1wK" kind="presentation" identifier="gotoReportes" id="WJK-Pa-ZEs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WUE-G1-RoB" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -494,7 +512,7 @@
                 <viewControllerPlaceholder storyboardName="Configuracion" id="8ld-jU-v8H" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ibN-Gy-HqY" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2807" y="494"/>
+            <point key="canvasLocation" x="2814" y="552"/>
         </scene>
         <!--CatProd-->
         <scene sceneID="if3-6m-yIk">
@@ -502,7 +520,7 @@
                 <viewControllerPlaceholder storyboardName="CatProd" id="EIQ-ov-9Ci" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sem-YV-WvU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2796" y="621"/>
+            <point key="canvasLocation" x="2803" y="602"/>
         </scene>
         <!--Proovedores-->
         <scene sceneID="I7r-bH-kyz">
@@ -510,7 +528,7 @@
                 <viewControllerPlaceholder storyboardName="Proovedores" id="iPE-JH-Qfm" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X81-Im-YvX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2804" y="734"/>
+            <point key="canvasLocation" x="2806" y="647"/>
         </scene>
         <!--Clientes-->
         <scene sceneID="y6U-LX-tV1">
@@ -518,7 +536,7 @@
                 <viewControllerPlaceholder storyboardName="Clientes" id="rjE-Mh-ugk" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ydv-tM-tKX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2796" y="812"/>
+            <point key="canvasLocation" x="2803" y="716"/>
         </scene>
         <!--Visualizar-->
         <scene sceneID="UHz-de-068">
@@ -526,7 +544,7 @@
                 <viewControllerPlaceholder storyboardName="Visualizar" id="XwQ-5w-Nlg" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yic-IR-Mzt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2799" y="887"/>
+            <point key="canvasLocation" x="2806" y="791"/>
         </scene>
         <!--Almacen-->
         <scene sceneID="fIA-Nq-FbA">
@@ -534,7 +552,7 @@
                 <viewControllerPlaceholder storyboardName="Almacen" id="8cJ-Hc-az7" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HCK-Rm-QAS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2797" y="994"/>
+            <point key="canvasLocation" x="2805" y="898"/>
         </scene>
         <!--Traspaso-->
         <scene sceneID="kkC-QX-Kly">
@@ -542,7 +560,15 @@
                 <viewControllerPlaceholder storyboardName="Traspaso" id="W0Q-pA-UTZ" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dsp-ki-8UC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2798" y="1062"/>
+            <point key="canvasLocation" x="2805" y="966"/>
+        </scene>
+        <!--Reportes-->
+        <scene sceneID="Vhu-sh-XxN">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Reportes" id="7Mu-tY-1wK" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Kb5-Fi-qa3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2799" y="1015"/>
         </scene>
     </scenes>
     <resources>

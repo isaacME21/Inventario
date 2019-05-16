@@ -302,6 +302,18 @@
                                 <action selector="salir:" destination="gmN-Yz-kao" id="UX0-ym-JJ9"/>
                             </connections>
                         </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="trash" id="5tw-GR-Jsc">
+                                <connections>
+                                    <action selector="borrarCliente:" destination="gmN-Yz-kao" id="GfE-qy-nV3"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="add" id="ATk-Uu-EUf">
+                                <connections>
+                                    <action selector="agregarCliente:" destination="gmN-Yz-kao" id="VZj-k5-yNc"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="CP" destination="P46-e2-xCQ" id="2nn-8Y-21p"/>

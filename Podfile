@@ -15,5 +15,6 @@ pod 'Firebase/Storage'
 pod 'Firebase/Firestore'
 pod 'SVProgressHUD'
 pod 'IQKeyboardManagerSwift'
+pod 'FSCalendar'
 
 end

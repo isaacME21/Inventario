@@ -18,9 +18,8 @@ class ConfigurationVC:UIViewController,UIImagePickerControllerDelegate,UINavigat
     @IBOutlet weak var Titulo: UITextField!
     @IBOutlet weak var MainImage: UIImageView!
     @IBOutlet weak var Footer: UITextField!
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    let imagePicker = UIImagePickerController()
-    let db = Firestore.firestore()
+    let imagePicker : UIImagePickerController = UIImagePickerController()
+    let db : Firestore = Firestore.firestore()
     
     
     
@@ -38,11 +37,9 @@ class ConfigurationVC:UIViewController,UIImagePickerControllerDelegate,UINavigat
     //MARK: Metodo Importante
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-        
-        if let userPickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            MainImage.image = userPickedImage
-        }
-        
+        guard let userPickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else
+        {fatalError("Error en userPickedImage")}
+        MainImage.image = userPickedImage
         
         imagePicker.dismiss(animated: true, completion: nil)
     }
@@ -56,7 +53,7 @@ class ConfigurationVC:UIViewController,UIImagePickerControllerDelegate,UINavigat
 
     @IBAction func CameraTapped(_ sender: UIBarButtonItem) {
         
-        let alert = UIAlertController(title: "Escoge una Imagen", message: nil, preferredStyle: .actionSheet)
+        let alert : UIAlertController = UIAlertController(title: "Escoge una Imagen", message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = UIColor(red:0.82, green:0.64, blue:0.32, alpha:1.0)
         
         
@@ -70,10 +67,8 @@ class ConfigurationVC:UIViewController,UIImagePickerControllerDelegate,UINavigat
         alert.addAction(UIAlertAction.init(title: "Cancelar", style: .cancel, handler: nil))
         
         
-        if let popoverController = alert.popoverPresentationController {
-            popoverController.barButtonItem = sender
-        }
-        
+        guard let popoverController = alert.popoverPresentationController else{ fatalError("Error en popoverController")}
+        popoverController.barButtonItem = sender
         
         present(alert, animated: true, completion: nil)
         
@@ -102,7 +97,7 @@ class ConfigurationVC:UIViewController,UIImagePickerControllerDelegate,UINavigat
             imagePicker.allowsEditing = true
             self.present(imagePicker, animated: true, completion: nil)
         }else{
-            let alert  = UIAlertController(title: "Advertencia", message: "No tienes Camara", preferredStyle: .alert)
+            let alert : UIAlertController = UIAlertController(title: "Advertencia", message: "No tienes Camara", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             
             

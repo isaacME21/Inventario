@@ -26,18 +26,18 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     
     @IBOutlet weak var saveButton: UIButton!
     
-     let imagePicker = UIImagePickerController()
-    let db = Firestore.firestore()
+    let imagePicker : UIImagePickerController = UIImagePickerController()
+    let db : Firestore = Firestore.firestore()
     
     //TODO: - VARIABLES PARA UISERACHBAR
-    var dataFiltered = [String]()
-    var isSearching = false
-    var items = [String]()
-    var itemInfo = [String : NSDictionary]()
+    var dataFiltered : [String] = [String]()
+    var isSearching : Bool = false
+    var items : [String] = [String]()
+    var itemInfo : [String : NSDictionary] = [String : NSDictionary]()
     
     //MARK: REFRESH CONTROL
     lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
+        let refreshControl : UIRefreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action:#selector(ClientesVC.handleRefresh(_:)), for: UIControl.Event.valueChanged)
         refreshControl.tintColor = UIColor.blue
         
@@ -91,7 +91,7 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
+        let cell : UITableViewCell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: "cell")
         
         if isSearching{ cell.textLabel?.text = dataFiltered[indexPath.row] }
         else { cell.textLabel?.text = items[indexPath.row] }
@@ -101,7 +101,7 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cliente = items[indexPath.row]
         
-        if let infoItem = itemInfo[cliente] {
+        if let infoItem : NSDictionary = itemInfo[cliente] {
             nombre.text = infoItem["Nombre"] as? String
             direccion1.text = infoItem["Direccion 1"] as? String
             direccion2.text = infoItem["Direccion 2"] as? String
@@ -110,8 +110,8 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
             codigoPostal.text = infoItem["CP"] as? String
             validar()
         }else{
-            let alert = UIAlertController(title: "No existe el cliente", message: nil, preferredStyle: .alert)
-            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            let alert : UIAlertController = UIAlertController(title: "No existe el cliente", message: nil, preferredStyle: .alert)
+            let OKAction : UIAlertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(OKAction)
             
             self.present(alert, animated: true)
@@ -168,13 +168,13 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
         if textField == codigoPostal {
-            let caracteresPermitidos = CharacterSet.decimalDigits
-            let characterSet = CharacterSet(charactersIn: string)
+            let caracteresPermitidos : CharacterSet = CharacterSet.decimalDigits
+            let characterSet : CharacterSet = CharacterSet(charactersIn: string)
             return caracteresPermitidos.isSuperset(of: characterSet)
         }
         
-        let caracteresPermitidos = CharacterSet.init(charactersIn: "abcdefghijklmnopqrstuvwxyz1234567890.,-/ ")
-        let characterSet = CharacterSet(charactersIn: string)
+        let caracteresPermitidos : CharacterSet = CharacterSet.init(charactersIn: "abcdefghijklmnopqrstuvwxyz1234567890.,-/ ")
+        let characterSet : CharacterSet = CharacterSet(charactersIn: string)
         return caracteresPermitidos.isSuperset(of: characterSet)
         
     }
@@ -189,7 +189,7 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
         
     }
     @IBAction func guardarTodo(_ sender: UIButton) {
-        var data = [String : Any]()
+        var data : [String : Any] = [String : Any]()
         data["Nombre"] = nombre.text ?? ""
         data["Direccion 1"] = direccion1.text ?? ""
         data["Direccion 2"] = direccion2.text ?? ""
@@ -229,7 +229,7 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
         //TODO: - Cargar informacion de Firebase
         func load(Collection: String) {
             db.collection("SexyRevolverData").document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
-                if let err = err {
+                if let err : Error = err {
                     print("Error getting documents: \(err)")
                 } else {
                     for document in QuerySnapshot!.documents {
@@ -249,7 +249,7 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     func save(Collection : String, Document : String, Data : [String : Any]){
         db.collection("SexyRevolverData").document("Inventario").collection(Collection).document(Document).setData(Data)
         { err in
-            if let err = err {
+            if let err : Error = err {
                 print("Error writing document: \(err)")
             } else {
                 print("Document successfully written!")
@@ -263,7 +263,7 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     //TODO: ELIMINAR INFORMACION DE FIREBASE
     func deleteFireStoreData(Documento : String)  {
         db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(Documento).delete { (err) in
-            if let err = err {
+            if let err : Error = err {
                 print("Error removing document: \(err)")
             } else {
                 print("Document successfully removed!")
