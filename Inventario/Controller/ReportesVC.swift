@@ -67,6 +67,17 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
         }
         
     }
+    
+    @IBAction func crearPDF(_ sender: UIBarButtonItem) {
+        performSegue(withIdentifier: "gotoPDF", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVC = segue.destination as! PDFVC
+        destinationVC.reporte = reportesArray
+    }
+    
+    
     @IBAction func opciones(_ sender: UIBarButtonItem) {
         let alert : UIAlertController = UIAlertController(title: "Seleccione una Opcion", message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = UIColor(red:0.82, green:0.64, blue:0.32, alpha:1.0)
@@ -216,6 +227,16 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
                             item.nombre = document.documentID
                             item.fecha = fecha.dateValue()
                             
+                            if let cantidadArray = data["Articulos"] as? NSMutableArray{
+                                var cantidadTemp : [Int] = [Int]()
+                                var cantidad = 0
+                                
+                                for x in cantidadArray{cantidadTemp.append(x as! Int)}
+                                for y in cantidadTemp{cantidad = cantidad + y}
+                                
+                                item.cantidad = cantidad
+                            }
+                            
                             self.reportesArray.append(item)
                         }
                         self.tabla.reloadData()
@@ -239,6 +260,16 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
                             item.nombre = document.documentID
                             item.fecha = fecha.dateValue()
                             
+                            if let cantidadArray = data["Articulos"] as? NSMutableArray{
+                                var cantidadTemp : [Int] = [Int]()
+                                var cantidad = 0
+                                
+                                for x in cantidadArray{cantidadTemp.append(x as! Int)}
+                                for y in cantidadTemp{cantidad = cantidad + y}
+                                
+                                item.cantidad = cantidad
+                            }
+                            
                             self.reportesArray.append(item)
                         }
                         self.tabla.reloadData()
@@ -257,6 +288,16 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
                             let item : ReporteItem = ReporteItem()
                             item.nombre = document.documentID
                             item.fecha = fecha.dateValue()
+                            
+                            if let cantidadArray = data["Articulos"] as? NSMutableArray{
+                                var cantidadTemp : [Int] = [Int]()
+                                var cantidad = 0
+                                
+                                for x in cantidadArray{cantidadTemp.append(x as! Int)}
+                                for y in cantidadTemp{cantidad = cantidad + y}
+                                
+                                item.cantidad = cantidad
+                            }
                             
                             self.reportesArray.append(item)
                         }

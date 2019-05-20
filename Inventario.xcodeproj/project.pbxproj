@@ -56,6 +56,8 @@
 		73A8B30C2288FE2F0038C1D9 /* Reportes.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73A8B30B2288FE2F0038C1D9 /* Reportes.storyboard */; };
 		73A8B30E228903900038C1D9 /* ReportesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A8B30D228903900038C1D9 /* ReportesVC.swift */; };
 		73A912EE21BF4C3F00D3CF68 /* ProovedoresVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A912ED21BF4C3F00D3CF68 /* ProovedoresVC.swift */; };
+		73AF2A09228F31F800C30EEB /* PDFVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73AF2A08228F31F800C30EEB /* PDFVC.swift */; };
+		73AF2A0B228F35DF00C30EEB /* SexyLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 73AF2A0A228F35DE00C30EEB /* SexyLogo.png */; };
 		73B612A9228781D6009E710D /* proovedor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B612A8228781D6009E710D /* proovedor.swift */; };
 		73B612AB22879004009E710D /* ArticuloInventario.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B612AA22879004009E710D /* ArticuloInventario.swift */; };
 		73B612AD228794D4009E710D /* Pedido.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B612AC228794D4009E710D /* Pedido.swift */; };
@@ -116,6 +118,8 @@
 		73A8B30B2288FE2F0038C1D9 /* Reportes.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Reportes.storyboard; sourceTree = "<group>"; };
 		73A8B30D228903900038C1D9 /* ReportesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportesVC.swift; sourceTree = "<group>"; };
 		73A912ED21BF4C3F00D3CF68 /* ProovedoresVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProovedoresVC.swift; sourceTree = "<group>"; };
+		73AF2A08228F31F800C30EEB /* PDFVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFVC.swift; sourceTree = "<group>"; };
+		73AF2A0A228F35DE00C30EEB /* SexyLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SexyLogo.png; sourceTree = "<group>"; };
 		73B612A8228781D6009E710D /* proovedor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = proovedor.swift; sourceTree = "<group>"; };
 		73B612AA22879004009E710D /* ArticuloInventario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticuloInventario.swift; sourceTree = "<group>"; };
 		73B612AC228794D4009E710D /* Pedido.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pedido.swift; sourceTree = "<group>"; };
@@ -246,6 +250,7 @@
 				73BCA4ED21E519310006530C /* GestionInventarioVC.swift */,
 				7347A08E22737A4500317A7B /* TraspasoEnEsperaVC.swift */,
 				73A8B30D228903900038C1D9 /* ReportesVC.swift */,
+				73AF2A08228F31F800C30EEB /* PDFVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -253,6 +258,7 @@
 		7388234C218A23B80051D7A3 /* Imagenes */ = {
 			isa = PBXGroup;
 			children = (
+				73AF2A0A228F35DE00C30EEB /* SexyLogo.png */,
 				7388234D218A23CA0051D7A3 /* configuration-with-gear.png */,
 				732F02DB21A7392C003FB74F /* barcode.png */,
 			);
@@ -333,6 +339,7 @@
 				736DE9B521851937007EC5DE /* LaunchScreen.storyboard in Resources */,
 				736DE9B221851937007EC5DE /* Assets.xcassets in Resources */,
 				730FA03E226F90E700A606D1 /* Proovedores.storyboard in Resources */,
+				73AF2A0B228F35DF00C30EEB /* SexyLogo.png in Resources */,
 				7344750A2194A4F20054AEB7 /* GoogleService-Info.plist in Resources */,
 				730FA047226F935E00A606D1 /* Almacen.storyboard in Resources */,
 				736DE9AD21851932007EC5DE /* Main.storyboard in Resources */,
@@ -364,8 +371,10 @@
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/PDFGenerator/PDFGenerator.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
+				"${BUILT_PRODUCTS_DIR}/TPPDF/TPPDF.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
@@ -380,8 +389,10 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IQKeyboardManagerSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PDFGenerator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TPPDF.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
@@ -424,6 +435,7 @@
 				7371798B21DECC1B00B05EE2 /* AlmacenVC.swift in Sources */,
 				735BCC4E2190B93100EC8710 /* CategoriaVC.swift in Sources */,
 				73629BCF22864E2400FA47E9 /* articulo.swift in Sources */,
+				73AF2A09228F31F800C30EEB /* PDFVC.swift in Sources */,
 				733B4298226FE6FA00B876FB /* RoundedImage.swift in Sources */,
 				730FA035226F83CB00A606D1 /* ContainerVC.swift in Sources */,
 				7398F7E821C4696600D1D6B4 /* FuncionesFirebase.swift in Sources */,
@@ -607,7 +619,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86V9YS97H9;
 				INFOPLIST_FILE = Inventario/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.IsaacMaya.Inventario;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -624,7 +636,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86V9YS97H9;
 				INFOPLIST_FILE = Inventario/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.IsaacMaya.Inventario;
 				PRODUCT_NAME = "$(TARGET_NAME)";

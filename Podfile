@@ -16,5 +16,6 @@ pod 'Firebase/Firestore'
 pod 'SVProgressHUD'
 pod 'IQKeyboardManagerSwift'
 pod 'FSCalendar'
-
+pod 'PDFGenerator'
+pod 'TPPDF'
 end

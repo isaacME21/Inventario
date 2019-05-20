@@ -78,7 +78,11 @@
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem systemItem="reply" id="iJp-Qd-Zig"/>
+                            <barButtonItem systemItem="reply" id="iJp-Qd-Zig">
+                                <connections>
+                                    <action selector="crearPDF:" destination="A5P-yP-9lO" id="2PS-G3-Fai"/>
+                                </connections>
+                            </barButtonItem>
                             <barButtonItem title="Item" image="configuration-with-gear" id="g1d-6O-0ju">
                                 <connections>
                                     <action selector="opciones:" destination="A5P-yP-9lO" id="HFC-Bd-zA6"/>
@@ -91,11 +95,37 @@
                         <outlet property="opcionTextfield" destination="8FD-fv-Fe9" id="X6T-uC-5Ci"/>
                         <outlet property="reportes" destination="8FD-fv-Fe9" id="SDg-6b-aaR"/>
                         <outlet property="tabla" destination="LmN-Qe-iOF" id="F8J-Ap-R0f"/>
+                        <segue destination="yxK-P8-oJc" kind="show" identifier="gotoPDF" id="bTA-97-n2P"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aN7-gg-2Jw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="959.76562499999989" y="153.90625"/>
+        </scene>
+        <!--PDFVC-->
+        <scene sceneID="llK-VW-L21">
+            <objects>
+                <viewController id="yxK-P8-oJc" customClass="PDFVC" customModule="Inventario" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Gv9-Z4-jgn">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JR7-Tt-KVW">
+                                <rect key="frame" x="0.0" y="70" width="1024" height="698"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </webView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="rlf-hP-IXw"/>
+                    </view>
+                    <connections>
+                        <outlet property="webView" destination="JR7-Tt-KVW" id="44B-H7-VZt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fc2-eq-ZAI" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1622.4609375" y="153.90625"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="xVD-OP-KTb">
