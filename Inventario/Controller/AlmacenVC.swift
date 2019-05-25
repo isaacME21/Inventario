@@ -59,7 +59,6 @@ class AlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSource, UI
         DispatchQueue.global(qos: .background).async {
             self.load(Collection: "Almacenes")
         }
-        
     }
     
     //TODO: - HANDLE REFRESH

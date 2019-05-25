@@ -11,6 +11,8 @@ import UIKit
 
 class ReporteItem {
     var nombre : String = ""
-    var cantidad : Int = 0
+    var cantidad : [Int]? 
     var fecha : Date = Date()
+    var articulos : [String]?
+    var almacen : String?
 }

@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import FSCalendar
+import SVProgressHUD
 
 class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
     
@@ -16,6 +17,7 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
     @IBOutlet weak var calendar: FSCalendar!
     @IBOutlet weak var tabla: UITableView!
     @IBOutlet weak var reportes: UITextField!
+    @IBOutlet weak var almacenes: UITextField!
     
     let formatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -26,9 +28,11 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
     }()
     
     let picker : UIPickerView = UIPickerView()
+    let almacenPicker : UIPickerView = UIPickerView()
     let opciones : [String] = ["Entre fechas", "Dia","Año"]
     var opcion : Int = 0
     var reporte : Int = 0
+    var almacenOpcion : [String] = [String]()
     
     var reportesArray : [ReporteItem] = [ReporteItem]()
     
@@ -36,9 +40,22 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
         super.viewDidLoad()
         //PickerView Opciones
         picker.delegate = self
+        almacenPicker.delegate = self
+        almacenes.delegate = self
+        reportes.delegate = self
         reportes.inputView = picker
+        almacenes.inputView = almacenPicker
+        almacenes.isEnabled = false
+        almacenes.isHidden = true
         
         tabla.register(UINib(nibName: "CustomViewCell", bundle: nil) , forCellReuseIdentifier: "cell")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        SVProgressHUD.show(withStatus: "Cargando")
+        DispatchQueue.global(qos: .background).async {
+            self.load(Collection: "Almacenes")
+        }
     }
     
     @IBAction func salir(_ sender: UIBarButtonItem) {
@@ -75,6 +92,9 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! PDFVC
         destinationVC.reporte = reportesArray
+        if reporte == 1{
+            destinationVC.reportePedidos = 1
+        }
     }
     
     
@@ -106,16 +126,24 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
     //TODO: - FUNCIONES DEL MENU
     func pedidos()  {
         self.title = "Reporte de Peidos"
+        almacenes.isEnabled = true
+        almacenes.isHidden = false
         reporte = 1
     }
     
     func articulos()  {
         self.title = "Reporte de Articulos"
+        almacenes.isEnabled = false
+        almacenes.isHidden = true
+        almacenes.text?.removeAll()
         reporte = 2
     }
     
     func usuarios()  {
         self.title = "Reporte de Usuarios"
+        almacenes.isEnabled = false
+        almacenes.isHidden = true
+        almacenes.text?.removeAll()
         reporte = 3
     }
     
@@ -126,27 +154,38 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
     }
     
     func pickerView( _ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return opciones.count
+        if pickerView == picker{
+           return opciones.count
+        }else{
+            return almacenOpcion.count
+        }
+        
     }
     
     func pickerView( _ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return opciones[row]
+        if pickerView == picker{
+            return opciones[row]
+        }else{
+            return almacenOpcion[row]
+        }
     }
     
     func pickerView( _ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        reportes.text = opciones[row]
-        
-        for x in calendar.selectedDates{calendar.deselect(x)}
-        
-        //MARK: CHECA LA OPCION Y EN BASE A ESO PERMITE SELECCIONAR UNA SOLA FECHA O 2 FECHAS AL MISMO TIEMPO
-        if opciones[row] == "Dia"{
-            opcion = 2
-        }else if opciones[row] == "Año"{
-            opcion = 3
-        }else {
-            opcion = 1
+        if pickerView == picker{
+            reportes.text = opciones[row]
+            for x in calendar.selectedDates{calendar.deselect(x)}
+            
+            //MARK: CHECA LA OPCION Y EN BASE A ESO PERMITE SELECCIONAR UNA SOLA FECHA O 2 FECHAS AL MISMO TIEMPO
+            if opciones[row] == "Dia"{
+                opcion = 2
+            }else if opciones[row] == "Año"{
+                opcion = 3
+            }else {
+                opcion = 1
+            }
+        }else{
+            almacenes.text = almacenOpcion[row]
         }
-        
     }
     
     //TODO: TABLEVIEW METHODS
@@ -229,15 +268,32 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
                             
                             if let cantidadArray = data["Articulos"] as? NSMutableArray{
                                 var cantidadTemp : [Int] = [Int]()
-                                var cantidad = 0
-                                
                                 for x in cantidadArray{cantidadTemp.append(x as! Int)}
-                                for y in cantidadTemp{cantidad = cantidad + y}
                                 
-                                item.cantidad = cantidad
+                                item.cantidad = cantidadTemp
+                            }
+                            
+                            if let articulosArray = data["ArticuloOrden"] as? NSMutableArray{
+                                var articulosTemp : [String] = [String]()
+                                for x in articulosArray{articulosTemp.append(x as! String)}
+                                
+                                item.articulos = articulosTemp
+                            }
+                            
+                            if let almacenDestino = data["Almacen 2"] as? String{
+                                item.almacen = almacenDestino
                             }
                             
                             self.reportesArray.append(item)
+                        }
+                        if self.almacenes.text?.isEmpty == false{
+                            var array : [ReporteItem] = [ReporteItem]()
+                            for x in self.reportesArray{
+                                if x.almacen == self.almacenes.text{
+                                    array.append(x)
+                                }
+                            }
+                            self.reportesArray = array
                         }
                         self.tabla.reloadData()
                     }
@@ -262,15 +318,32 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
                             
                             if let cantidadArray = data["Articulos"] as? NSMutableArray{
                                 var cantidadTemp : [Int] = [Int]()
-                                var cantidad = 0
-                                
                                 for x in cantidadArray{cantidadTemp.append(x as! Int)}
-                                for y in cantidadTemp{cantidad = cantidad + y}
                                 
-                                item.cantidad = cantidad
+                                item.cantidad = cantidadTemp
+                            }
+                            
+                            if let articulosArray = data["ArticuloOrden"] as? NSMutableArray{
+                                var articulosTemp : [String] = [String]()
+                                for x in articulosArray{articulosTemp.append(x as! String)}
+                                
+                                item.articulos = articulosTemp
+                            }
+                            
+                            if let almacenDestino = data["Almacen 2"] as? String{
+                                item.almacen = almacenDestino
                             }
                             
                             self.reportesArray.append(item)
+                        }
+                        if self.almacenes.text?.isEmpty == false{
+                            var array : [ReporteItem] = [ReporteItem]()
+                            for x in self.reportesArray{
+                                if x.almacen == self.almacenes.text{
+                                    array.append(x)
+                                }
+                            }
+                            self.reportesArray = array
                         }
                         self.tabla.reloadData()
                     }
@@ -291,18 +364,51 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
                             
                             if let cantidadArray = data["Articulos"] as? NSMutableArray{
                                 var cantidadTemp : [Int] = [Int]()
-                                var cantidad = 0
-                                
                                 for x in cantidadArray{cantidadTemp.append(x as! Int)}
-                                for y in cantidadTemp{cantidad = cantidad + y}
                                 
-                                item.cantidad = cantidad
+                                item.cantidad = cantidadTemp
+                            }
+                            
+                            if let articulosArray = data["ArticuloOrden"] as? NSMutableArray{
+                                var articulosTemp : [String] = [String]()
+                                for x in articulosArray{articulosTemp.append(x as! String)}
+                                
+                                item.articulos = articulosTemp
+                            }
+                            
+                            if let almacenDestino = data["Almacen 2"] as? String{
+                                item.almacen = almacenDestino
                             }
                             
                             self.reportesArray.append(item)
                         }
+                        if self.almacenes.text?.isEmpty == false{
+                            var array : [ReporteItem] = [ReporteItem]()
+                            for x in self.reportesArray{
+                                if x.almacen == self.almacenes.text{
+                                    array.append(x)
+                                }
+                            }
+                            self.reportesArray = array
+                        }
                         self.tabla.reloadData()
                     }
+            }
+        }
+    }
+    
+    
+    //TODO: - Cargar informacion de Firebase
+    func load(Collection: String) {
+        db.collection("SexyRevolverData").document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
+            if let err : Error = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in QuerySnapshot!.documents {
+                    //print("\(document.documentID) => \(document.data())")
+                    self.almacenOpcion.append(document.documentID)
+                }
+                SVProgressHUD.dismiss()
             }
         }
     }

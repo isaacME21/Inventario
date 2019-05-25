@@ -50,7 +50,7 @@
                                 </connections>
                             </tableView>
                             <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8FD-fv-Fe9">
-                                <rect key="frame" x="0.0" y="108" width="500" height="30"/>
+                                <rect key="frame" x="0.0" y="108" width="250" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -67,6 +67,13 @@
                                     <action selector="generarReporte:" destination="A5P-yP-9lO" eventType="touchUpInside" id="JhD-bx-wQ3"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yKc-S3-AYU">
+                                <rect key="frame" x="258" y="108" width="242" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="e4I-lt-piU"/>
@@ -91,11 +98,12 @@
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="almacenes" destination="yKc-S3-AYU" id="jcf-zO-vp1"/>
                         <outlet property="calendar" destination="DE6-kb-6fM" id="kbY-Ua-DB5"/>
                         <outlet property="opcionTextfield" destination="8FD-fv-Fe9" id="X6T-uC-5Ci"/>
                         <outlet property="reportes" destination="8FD-fv-Fe9" id="SDg-6b-aaR"/>
                         <outlet property="tabla" destination="LmN-Qe-iOF" id="F8J-Ap-R0f"/>
-                        <segue destination="yxK-P8-oJc" kind="show" identifier="gotoPDF" id="bTA-97-n2P"/>
+                        <segue destination="yxK-P8-oJc" kind="show" identifier="gotoPDF" id="6fO-XH-nOH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aN7-gg-2Jw" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -109,23 +117,20 @@
                     <view key="view" contentMode="scaleToFill" id="Gv9-Z4-jgn">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <webView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JR7-Tt-KVW">
-                                <rect key="frame" x="0.0" y="70" width="1024" height="698"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </webView>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="rlf-hP-IXw"/>
                     </view>
-                    <connections>
-                        <outlet property="webView" destination="JR7-Tt-KVW" id="44B-H7-VZt"/>
-                    </connections>
+                    <navigationItem key="navigationItem" id="rVM-nW-VSE">
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="YEg-ME-4Kl">
+                            <connections>
+                                <action selector="sendMail:" destination="yxK-P8-oJc" id="BxZ-0n-A41"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fc2-eq-ZAI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1622.4609375" y="153.90625"/>
+            <point key="canvasLocation" x="1688" y="154"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="xVD-OP-KTb">
