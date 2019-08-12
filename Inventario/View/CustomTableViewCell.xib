@@ -27,7 +27,7 @@
                         </constraints>
                     </imageView>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9hn-E3-Ft7">
-                        <rect key="frame" x="59" y="11" width="192.5" height="53"/>
+                        <rect key="frame" x="59" y="11" width="145.5" height="53"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D5g-tG-wit">
                                 <rect key="frame" x="9" y="0.0" width="31" height="22"/>
@@ -57,10 +57,10 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VWZ-KK-45N">
-                        <rect key="frame" x="268.5" y="11" width="51.5" height="53"/>
+                        <rect key="frame" x="235.5" y="11" width="84.5" height="53"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YmT-r7-jnD">
-                                <rect key="frame" x="13" y="0.0" width="26.5" height="16"/>
+                                <rect key="frame" x="13" y="0.0" width="31" height="16"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -75,9 +75,8 @@
                         <constraints>
                             <constraint firstItem="YmT-r7-jnD" firstAttribute="top" secondItem="VWZ-KK-45N" secondAttribute="top" id="1SN-kc-QvC"/>
                             <constraint firstAttribute="bottom" secondItem="Xbm-dE-2V7" secondAttribute="bottom" constant="8.5" id="B9w-Te-fb0"/>
+                            <constraint firstAttribute="trailing" secondItem="YmT-r7-jnD" secondAttribute="trailing" constant="40.5" id="EWf-CH-WJr"/>
                             <constraint firstItem="Xbm-dE-2V7" firstAttribute="leading" secondItem="VWZ-KK-45N" secondAttribute="leading" constant="8" id="Vth-I3-UEi"/>
-                            <constraint firstAttribute="trailing" secondItem="YmT-r7-jnD" secondAttribute="trailing" constant="12" id="dVH-m7-g9O"/>
-                            <constraint firstAttribute="trailing" secondItem="Xbm-dE-2V7" secondAttribute="trailing" constant="6" id="lQn-gP-T51"/>
                             <constraint firstItem="YmT-r7-jnD" firstAttribute="leading" secondItem="VWZ-KK-45N" secondAttribute="leading" constant="13" id="r1j-in-4tx"/>
                             <constraint firstItem="Xbm-dE-2V7" firstAttribute="top" secondItem="YmT-r7-jnD" secondAttribute="bottom" constant="10.5" id="xit-So-ggZ"/>
                         </constraints>
@@ -98,7 +97,7 @@
                     <constraint firstItem="iTm-vB-G2x" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="11" id="fxa-jp-BDU"/>
                     <constraint firstItem="9hn-E3-Ft7" firstAttribute="leading" secondItem="iTm-vB-G2x" secondAttribute="trailing" constant="6" id="oht-cq-sPo"/>
                     <constraint firstItem="iTm-vB-G2x" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="ybz-7G-wBg"/>
-                    <constraint firstItem="VWZ-KK-45N" firstAttribute="leading" secondItem="9hn-E3-Ft7" secondAttribute="trailing" constant="17" id="zfc-yn-u0y"/>
+                    <constraint firstItem="VWZ-KK-45N" firstAttribute="leading" secondItem="9hn-E3-Ft7" secondAttribute="trailing" constant="31" id="zfc-yn-u0y"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>

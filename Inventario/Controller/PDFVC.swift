@@ -18,6 +18,7 @@ class PDFVC: UIViewController, WKNavigationDelegate, MFMailComposeViewController
     var webView : WKWebView!
     var reportePedidos : Int = 0
     var PDF : URL?
+    var barcode : CodigosDeBarras = CodigosDeBarras()
     
     override func loadView() {
         webView = WKWebView()
@@ -25,6 +26,12 @@ class PDFVC: UIViewController, WKNavigationDelegate, MFMailComposeViewController
         view = webView
     }
     var reporte : [ReporteItem]?{
+        didSet{
+            print("Se arma")
+        }
+    }
+    
+    var codigo : [CodigoItem]?{
         didSet{
             print("Se arma")
         }
@@ -42,8 +49,10 @@ class PDFVC: UIViewController, WKNavigationDelegate, MFMailComposeViewController
         super.viewDidLoad()
         if reportePedidos == 0{
             GeneratePDF()
-        }else{
+        }else if reportePedidos == 1{
             GeneratePedidos()
+        }else if reportePedidos == 2{
+            generarCodigos()
         }
         
     }
@@ -99,8 +108,9 @@ class PDFVC: UIViewController, WKNavigationDelegate, MFMailComposeViewController
             ])
         
         // Add an image and scale it down. Image will not be drawn scaled, instead it will be scaled down and compressed to save file size.
-        let logoImage = PDFImage(image: UIImage(named: "SexyLogo.png")!,
-                                 caption: nil, size: CGSize(width: 400, height: 300),
+        guard let imageTemp = barcode.generadorDeCodigosDeBarra(Referencia: "Hola", op: 3) else {fatalError("Barcode Error")}
+        let logoImage = PDFImage(image: UIImage(named: "SexyLogo")!,
+                                 caption: nil, size: CGSize(width: 100, height: 100),
                                  options: [.none])
         document.addImage(.contentCenter, image: logoImage)
         
@@ -232,8 +242,9 @@ class PDFVC: UIViewController, WKNavigationDelegate, MFMailComposeViewController
             ])
         
         // Add an image and scale it down. Image will not be drawn scaled, instead it will be scaled down and compressed to save file size.
-        let logoImage = PDFImage(image: UIImage(named: "SexyLogo.png")!,
-                                 caption: nil, size: CGSize(width: 400, height: 300),
+        guard let imageTemp = barcode.generadorDeCodigosDeBarra(Referencia: "Hola", op: 3) else {fatalError("Barcode Error")}
+        let logoImage = PDFImage(image: UIImage(named: "SexyLogo")!,
+                                 caption: nil, size: CGSize(width: 100, height: 100),
                                  options: [.none])
         document.addImage(.contentCenter, image: logoImage)
         
@@ -343,5 +354,66 @@ class PDFVC: UIViewController, WKNavigationDelegate, MFMailComposeViewController
         }
         
     }
+    
+    
+    func generarCodigos(){
+        
+        let document = PDFDocument(format: .a4)
+        var imagenes : [PDFImage] = []
+        
+        // Set document meta data
+        document.info.title = "Reporte PDF"
+        
+        // Set spacing of header and footer
+        document.layout.space.header = 5
+        document.layout.space.footer = 5
+        
+        // Add custom pagination
+        document.pagination = PDFPagination(container: .footerRight, style: PDFPaginationStyle.customClosure { (page, total) -> String in
+            return "\(page) / \(total)"
+            }, range: (1, 20), textAttributes: [
+                .font: UIFont.boldSystemFont(ofSize: 15.0),
+                .foregroundColor: UIColor.black
+            ])
+        
+        // Add an image and scale it down. Image will not be drawn scaled, instead it will be scaled down and compressed to save file size.
+        for x in codigo!{
+            if x.selected == true{
+                guard let imageTemp = barcode.generadorDeCodigosDeBarra(Referencia: x.name!, op: 3) else {fatalError("Barcode Error")}
+                let newImage = PDFImage(image: imageTemp,
+                                        caption: nil, size: CGSize(width: 100, height: 100),
+                                        options: [.none])
+                imagenes.append(newImage)
+            }
+        }
+        
+        let logoImage = PDFImage(image: UIImage(named: "SexyLogo")!,
+                                 caption: nil, size: CGSize(width: 100, height: 100),
+                                 options: [.none])
+        document.addImage(.contentCenter, image: logoImage)
+        document.addImagesInRow(images: imagenes)
+        
+        
+        
+        do {
+            // Generate PDF file and save it in a temporary file. This returns the file URL to the temporary file
+            let url = try PDFGenerator.generateURL(document: document, filename: "Example.pdf", progress: {
+                (progressValue: CGFloat) in
+                SVProgressHUD.showProgress(Float(progressValue))
+                print("progress: ", progressValue)
+                if Float(progressValue) == 1 {
+                    SVProgressHUD.dismiss()
+                }
+            }, debug: false)
+            
+            // Load PDF into a webview from the temporary file
+            PDF = url
+            webView.load(URLRequest(url: url))
+        } catch {
+            print("Error while generating PDF: " + error.localizedDescription)
+        }
+        
+    }
+    
 
 }

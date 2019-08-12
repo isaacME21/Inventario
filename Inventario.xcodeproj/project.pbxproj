@@ -17,6 +17,7 @@
 		730FA044226F928D00A606D1 /* Visualizar.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 730FA043226F928D00A606D1 /* Visualizar.storyboard */; };
 		730FA047226F935E00A606D1 /* Almacen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 730FA046226F935E00A606D1 /* Almacen.storyboard */; };
 		730FA04A226F93F200A606D1 /* Traspaso.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 730FA049226F93F200A606D1 /* Traspaso.storyboard */; };
+		7314C2F222EBC66900D745FE /* ZapatosVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7314C2F122EBC66900D745FE /* ZapatosVC.swift */; };
 		731F2D772288CBE0001B4808 /* ViewControllerMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731F2D762288CBE0001B4808 /* ViewControllerMethods.swift */; };
 		7321FD702265039F00EA41CE /* AlertController+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7321FD6F2265039F00EA41CE /* AlertController+Image.swift */; };
 		7321FD722265056D00EA41CE /* UIImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7321FD712265056D00EA41CE /* UIImage+Resize.swift */; };
@@ -64,6 +65,11 @@
 		73B6E0942263BCC90073D7A2 /* ScannArticulosVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B6E0932263BCC90073D7A2 /* ScannArticulosVC.swift */; };
 		73B6E0962263BE730073D7A2 /* DashboardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B6E0952263BE730073D7A2 /* DashboardVC.swift */; };
 		73BCA4EE21E519310006530C /* GestionInventarioVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BCA4ED21E519310006530C /* GestionInventarioVC.swift */; };
+		73C026EE22C415D500ACEB50 /* CodigoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C026ED22C415D500ACEB50 /* CodigoItem.swift */; };
+		73C026F222C6CBFC00ACEB50 /* POSVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C026F122C6CBFC00ACEB50 /* POSVC.swift */; };
+		73C026F422C6D0AC00ACEB50 /* ArticulosCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C026F322C6D0AC00ACEB50 /* ArticulosCollectionViewCell.swift */; };
+		73C026F622C8FF7000ACEB50 /* ArticulosPOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C026F522C8FF6F00ACEB50 /* ArticulosPOS.swift */; };
+		EC0976FC22F1D7AA005D7733 /* Zapatos.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0976FB22F1D7AA005D7733 /* Zapatos.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -77,6 +83,7 @@
 		730FA043226F928D00A606D1 /* Visualizar.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Visualizar.storyboard; sourceTree = "<group>"; };
 		730FA046226F935E00A606D1 /* Almacen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Almacen.storyboard; sourceTree = "<group>"; };
 		730FA049226F93F200A606D1 /* Traspaso.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Traspaso.storyboard; sourceTree = "<group>"; };
+		7314C2F122EBC66900D745FE /* ZapatosVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZapatosVC.swift; sourceTree = "<group>"; };
 		731F2D762288CBE0001B4808 /* ViewControllerMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerMethods.swift; sourceTree = "<group>"; };
 		7321FD6F2265039F00EA41CE /* AlertController+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertController+Image.swift"; sourceTree = "<group>"; };
 		7321FD712265056D00EA41CE /* UIImage+Resize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Resize.swift"; sourceTree = "<group>"; };
@@ -126,7 +133,12 @@
 		73B6E0932263BCC90073D7A2 /* ScannArticulosVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannArticulosVC.swift; sourceTree = "<group>"; };
 		73B6E0952263BE730073D7A2 /* DashboardVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardVC.swift; sourceTree = "<group>"; };
 		73BCA4ED21E519310006530C /* GestionInventarioVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestionInventarioVC.swift; sourceTree = "<group>"; };
+		73C026ED22C415D500ACEB50 /* CodigoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodigoItem.swift; sourceTree = "<group>"; };
+		73C026F122C6CBFC00ACEB50 /* POSVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POSVC.swift; sourceTree = "<group>"; };
+		73C026F322C6D0AC00ACEB50 /* ArticulosCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticulosCollectionViewCell.swift; sourceTree = "<group>"; };
+		73C026F522C8FF6F00ACEB50 /* ArticulosPOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticulosPOS.swift; sourceTree = "<group>"; };
 		997BA71AD6E89FD2CFE8390B /* Pods_Inventario.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Inventario.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC0976FB22F1D7AA005D7733 /* Zapatos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zapatos.swift; sourceTree = "<group>"; };
 		F6AC7732C98B86C773975E98 /* Pods-Inventario.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Inventario.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Inventario/Pods-Inventario.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -206,6 +218,10 @@
 				731F2D762288CBE0001B4808 /* ViewControllerMethods.swift */,
 				73559273228C95EF003DD1E6 /* StardEndDates.swift */,
 				73559275228C9D80003DD1E6 /* ReporteItem.swift */,
+				73C026ED22C415D500ACEB50 /* CodigoItem.swift */,
+				73C026F322C6D0AC00ACEB50 /* ArticulosCollectionViewCell.swift */,
+				73C026F522C8FF6F00ACEB50 /* ArticulosPOS.swift */,
+				EC0976FB22F1D7AA005D7733 /* Zapatos.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -242,6 +258,7 @@
 				7388234F218A2C180051D7A3 /* ConfigurationVC.swift */,
 				735BCC4D2190B93100EC8710 /* CategoriaVC.swift */,
 				735BCC4F2190B95100EC8710 /* ProductoVC.swift */,
+				7314C2F122EBC66900D745FE /* ZapatosVC.swift */,
 				73A912ED21BF4C3F00D3CF68 /* ProovedoresVC.swift */,
 				7398F7E521C345CD00D1D6B4 /* ClientesVC.swift */,
 				73279EEE21D6BE3500C11366 /* VizualizarArticulosVC.swift */,
@@ -251,6 +268,7 @@
 				7347A08E22737A4500317A7B /* TraspasoEnEsperaVC.swift */,
 				73A8B30D228903900038C1D9 /* ReportesVC.swift */,
 				73AF2A08228F31F800C30EEB /* PDFVC.swift */,
+				73C026F122C6CBFC00ACEB50 /* POSVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -433,8 +451,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				7371798B21DECC1B00B05EE2 /* AlmacenVC.swift in Sources */,
+				7314C2F222EBC66900D745FE /* ZapatosVC.swift in Sources */,
 				735BCC4E2190B93100EC8710 /* CategoriaVC.swift in Sources */,
 				73629BCF22864E2400FA47E9 /* articulo.swift in Sources */,
+				73C026F222C6CBFC00ACEB50 /* POSVC.swift in Sources */,
 				73AF2A09228F31F800C30EEB /* PDFVC.swift in Sources */,
 				733B4298226FE6FA00B876FB /* RoundedImage.swift in Sources */,
 				730FA035226F83CB00A606D1 /* ContainerVC.swift in Sources */,
@@ -454,9 +474,12 @@
 				735BCC502190B95100EC8710 /* ProductoVC.swift in Sources */,
 				7347A08F22737A4500317A7B /* TraspasoEnEsperaVC.swift in Sources */,
 				73A8B30E228903900038C1D9 /* ReportesVC.swift in Sources */,
+				73C026F422C6D0AC00ACEB50 /* ArticulosCollectionViewCell.swift in Sources */,
+				EC0976FC22F1D7AA005D7733 /* Zapatos.swift in Sources */,
 				7321FD7422650D7200EA41CE /* UIAlertAction+Image.swift in Sources */,
 				73629BCD2286488100FA47E9 /* categoriaClass.swift in Sources */,
 				7321FD722265056D00EA41CE /* UIImage+Resize.swift in Sources */,
+				73C026F622C8FF7000ACEB50 /* ArticulosPOS.swift in Sources */,
 				733B429C226FE95D00B876FB /* CustomTableViewCell.swift in Sources */,
 				73559274228C95F0003DD1E6 /* StardEndDates.swift in Sources */,
 				736BA71F218CCA1F0058CCE1 /* MenuTVC.swift in Sources */,
@@ -471,6 +494,7 @@
 				731F2D772288CBE0001B4808 /* ViewControllerMethods.swift in Sources */,
 				7370588721A9FCF40018EAB4 /* CodigosDeBarras.swift in Sources */,
 				733B4297226FE6FA00B876FB /* CustomSegmentedControl.swift in Sources */,
+				73C026EE22C415D500ACEB50 /* CodigoItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

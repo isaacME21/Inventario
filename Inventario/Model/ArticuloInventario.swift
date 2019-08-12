@@ -12,6 +12,7 @@ import UIKit
 class ArticuloInventario {
     var nombre : String
     var cantidad : Int = 1
+    var tipo : String = ""
     
     init(nombre : String) {
         self.nombre = nombre

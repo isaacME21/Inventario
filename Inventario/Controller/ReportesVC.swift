@@ -27,12 +27,15 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
         return formatter
     }()
     
+
+    
     let picker : UIPickerView = UIPickerView()
     let almacenPicker : UIPickerView = UIPickerView()
     let opciones : [String] = ["Entre fechas", "Dia","Año"]
     var opcion : Int = 0
     var reporte : Int = 0
     var almacenOpcion : [String] = [String]()
+    var itemArray : [CodigoItem] = [CodigoItem]()
     
     var reportesArray : [ReporteItem] = [ReporteItem]()
     
@@ -49,6 +52,8 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
         almacenes.isHidden = true
         
         tabla.register(UINib(nibName: "CustomViewCell", bundle: nil) , forCellReuseIdentifier: "cell")
+        tabla.allowsMultipleSelection = true
+        tabla.allowsSelectionDuringEditing = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -95,6 +100,10 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
         if reporte == 1{
             destinationVC.reportePedidos = 1
         }
+        else if reporte == 4{
+            destinationVC.codigo = itemArray
+            destinationVC.reportePedidos = 2
+        }
     }
     
     
@@ -112,6 +121,10 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
         
         alert.addAction(UIAlertAction(title: "Usuarios", style: .default, handler: { _ in
             self.usuarios()
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Codigo de Barras", style: .default, handler: { _ in
+            self.codigoDeBarras()
         }))
         
         alert.addAction(UIAlertAction.init(title: "Cancelar", style: .cancel, handler: nil))
@@ -145,6 +158,13 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
         almacenes.isHidden = true
         almacenes.text?.removeAll()
         reporte = 3
+    }
+    
+    func codigoDeBarras(){
+        self.title = "Generar Codigo de Barras"
+        loadArticulos(Collection: "Articulos")
+        loadArticulos(Collection: "Zapatos")
+        reporte = 4
     }
     
     // MARK: UIPickerView Delegation
@@ -190,19 +210,41 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
     
     //TODO: TABLEVIEW METHODS
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return reportesArray.count
+        if reporte != 4{
+            return reportesArray.count
+        }else{
+            return itemArray.count
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell : CustomViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomViewCell
-        cell.Articulo.text = reportesArray[indexPath.row].nombre
-        cell.cantidadUpLabel.text = "Fecha"
-        cell.Cantidad.text = formatter.string(from: reportesArray[indexPath.row].fecha)
+        if reporte == 4{
+            let cell = UITableViewCell(style: .value1, reuseIdentifier: "cell2" )
+            cell.textLabel?.text = itemArray[indexPath.row].name!
+            cell.accessoryType = itemArray[indexPath.row].selected ? .checkmark : .none
+            return cell
+        }else{
+            let cell : CustomViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomViewCell
+            cell.Articulo.text = reportesArray[indexPath.row].nombre
+            cell.cantidadUpLabel.text = "Fecha"
+            cell.Cantidad.text = formatter.string(from: reportesArray[indexPath.row].fecha)
+            
+            cell.Articulo.adjustsFontSizeToFitWidth = true
+            cell.Cantidad.adjustsFontSizeToFitWidth = true
+            
+            return cell
+        }
         
-        cell.Articulo.adjustsFontSizeToFitWidth = true
-        cell.Cantidad.adjustsFontSizeToFitWidth = true
-        
-        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if itemArray[indexPath.row].selected == true{
+            itemArray[indexPath.row].selected = false
+        }else{
+            itemArray[indexPath.row].selected = true
+        }
+        tableView.reloadData()
     }
     
     
@@ -231,23 +273,28 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
 
     //TODO: LOAD PEDIDOS
     func loadPedidos(Fechas : [Date])  {
+        reportesArray.removeAll()
         let reference : CollectionReference = db.collection("Pedidos En Espera")
         loadOpcion(reference: reference, Fechas: Fechas)
     }
     //TODO: LOAD ARTICULOS
     func loadArticulos(Fechas : [Date])  {
+        reportesArray.removeAll()
         let reference : CollectionReference = db.collection("SexyRevolverData").document("Inventario").collection("Articulos")
         loadOpcion(reference: reference, Fechas: Fechas)
+        let reference2 : CollectionReference = db.collection("SexyRevolverData").document("Inventario").collection("Zapatos")
+        loadOpcion(reference: reference2, Fechas: Fechas)
     }
     //TODO: LOAD USUARIOS
     func loadUsuarios(Fechas : [Date])  {
+        reportesArray.removeAll()
         let reference : CollectionReference = db.collection("Users")
         loadOpcion(reference: reference, Fechas: Fechas)
     }
     
     //TODO: FUNCION PARA CARGAR LAS OPCIONES
     func loadOpcion(reference : CollectionReference , Fechas : [Date])  {
-        reportesArray.removeAll()
+        
         if opcion == 1{
             let startOfDate = Fechas[0].startOfDay
             let endOfDate = Fechas[1].endOfDay
@@ -409,7 +456,26 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
                     self.almacenOpcion.append(document.documentID)
                 }
                 SVProgressHUD.dismiss()
+                self.tabla.reloadData()
             }
         }
     }
+    
+    func loadArticulos(Collection: String) {
+        db.collection("SexyRevolverData").document("Inventario").collection(Collection).getDocuments { (QuerySnapshot, err) in
+            if let err : Error = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in QuerySnapshot!.documents {
+                    //print("\(document.documentID) => \(document.data())")
+                        let newItem = CodigoItem()
+                        newItem.name = document.documentID
+                        self.itemArray.append(newItem)
+                }
+                SVProgressHUD.dismiss()
+                self.tabla.reloadData()
+            }
+        }
+    }
+    
 }

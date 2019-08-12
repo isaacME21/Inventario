@@ -444,12 +444,13 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
         dismiss(animated: true, completion: nil)
     }
     @IBAction func Enviar(_ sender: UIButton) {
+        #warning("Revisar la validacion")
         
             if ArticulosAlmacen1.isEmpty == false {
                 let x : String = almacen.text!
                 let y : String = almacen2.text!
-                if x == "" {alertInput() ;return}
-                if y == "" {alertInput() ;return}
+                //if x == "" {alertInput() ;return}
+                //if y == "" {alertInput() ;return}
                 
                 if opcion == 1{
                     SVProgressHUD.show(withStatus: "Cargando")
@@ -530,6 +531,22 @@ class GestionInventarioVC: UIViewController,UITableViewDelegate, UITableViewData
                 print("Error getting documents: \(err)")
             } else {
                 self.Articulos.removeAll()
+                for document in QuerySnapshot!.documents {
+                    print("\(document.documentID) => \(document.data())")
+                    self.Articulos.append(document.documentID)
+                }
+                self.loadZapatos()
+                self.tabla.reloadData()
+                SVProgressHUD.dismiss()
+            }
+        }
+    }
+    
+    func loadZapatos(){
+        db.collection("SexyRevolverData").document("Inventario").collection("Zapatos").getDocuments { (QuerySnapshot, err) in
+            if let err : Error = err {
+                print("Error getting documents: \(err)")
+            } else {
                 for document in QuerySnapshot!.documents {
                     print("\(document.documentID) => \(document.data())")
                     self.Articulos.append(document.documentID)

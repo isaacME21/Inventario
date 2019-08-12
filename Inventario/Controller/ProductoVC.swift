@@ -708,7 +708,7 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
                 SVProgressHUD.dismiss()
             }
         }
-        
+
     }
     func deleteFireStoreData(Documento : String)  {
         db.collection("SexyRevolverData").document("Inventario").collection("Articulos").document(Documento).delete { (err) in

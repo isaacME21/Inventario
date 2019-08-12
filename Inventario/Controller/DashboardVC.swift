@@ -111,9 +111,9 @@ class DashboardVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, U
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        let defaults = UserDefaults.standard
-        guard let itemScann : String = defaults.object(forKey: "itemScann") as? String else {fatalError("error en itemScann")}
-        loadScann(item: itemScann)
+        //let defaults = UserDefaults.standard
+        //guard let itemScann : String = defaults.object(forKey: "itemScann") as? String else {fatalError("error en itemScann")}
+        //loadScann(item: itemScann)
     }
     
     deinit {
