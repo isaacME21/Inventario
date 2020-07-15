@@ -225,6 +225,11 @@ class CrearAlmacenVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     }
     
     
+    @IBAction func cerrar(_ sender: UIBarButtonItem) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    
     
         //TODO: - Cargar informacion de Firebase
         func load(Collection: String) {

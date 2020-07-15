@@ -119,28 +119,24 @@ class LogInVC: UIViewController {
                     //Logeo exitoso
                     UserDefaults.standard.set(UserNameTemp, forKey: "UserName")
                     UserDefaults.standard.set(contraseñaTemp, forKey: "Pass")
-//                    let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-//                    changeRequest?.displayName = "ADMIN"
-//                    changeRequest?.commitChanges { (error) in
-//                        if let err = error {
-//                            print("DisplayName no se cambio: \(err)")
-//                        } else {
-//                            print("DisplayName se cambio")
-//                        }
-//                    }
-                    
                     
                     let alert = UIAlertController(title: "Seleccione una opcion", message: "", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "POS", style: .default, handler: { action in
-                        if Auth.auth().currentUser!.displayName == "ADMIN"{
-                            self.performSegue(withIdentifier: "gotoPOS", sender: self)
-                        }
-                    }))
-                        
-                    alert.addAction(UIAlertAction(title: "Inventario", style: .default, handler: { action in
-                        self.performSegue(withIdentifier: "gotoMain", sender: self)
-                    }))
                     
+                    
+                    if UserNameTemp! == "prueba@mail.com"{
+                        alert.addAction(UIAlertAction(title: "POS", style: .default, handler: { action in
+                            self.performSegue(withIdentifier: "gotoPOS", sender: self)
+                        }))
+                            
+                        alert.addAction(UIAlertAction(title: "Inventario", style: .default, handler: { action in
+                            self.performSegue(withIdentifier: "gotoMain", sender: self)
+                        }))
+                    }else{
+                        alert.addAction(UIAlertAction(title: "POS", style: .default, handler: { action in
+                            self.performSegue(withIdentifier: "gotoPOS", sender: self)
+                        }))
+                    }
+
                     DispatchQueue.main.async {
                         SVProgressHUD.dismiss()
                         self.present(alert, animated: true)

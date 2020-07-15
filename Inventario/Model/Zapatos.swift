@@ -18,6 +18,7 @@ class Zapatos {
     var beneficioBruto : String = ""
     var margen : String = ""
     var impuestos : String = ""
+    var descripcion : String = ""
     
     init(name : String) {
         self.zapatoName = name

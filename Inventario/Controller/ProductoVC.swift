@@ -518,15 +518,23 @@ class ProductoVC: UIViewController, UIImagePickerControllerDelegate,UINavigation
     //MARK: CALCULAR PRECIO DE VENTA, MARGEN BRUTO Y PORCENTAJE BRUTO
     func precioVenta() -> Double{
         let compra : Double = (PrecioDeCompra.text! as NSString).doubleValue
-        let x : Double = compra * 4.7
-        let Venta : Double = Double(round(1000*x)/1000)
-        return Venta
+        let costoMXN = compra * 20.5
+        let MUO = costoMXN / 2
+        let factorUtilidad = costoMXN * 4
+        let MUOFactor = MUO + factorUtilidad
+        let PVMC = (MUOFactor * 0.07) + MUOFactor
+        
+        return PVMC
     }
     func margenBruto() -> Double{
         let compra : Double = (PrecioDeCompra.text! as NSString).doubleValue
-        let venta : Double = compra * 4.7
-        let x : Double = venta - compra
-        let margenBruto : Double = Double(round(1000*x)/1000)
+        let costoMXN = compra * 20.5
+        let MUO = costoMXN / 2
+        let factorUtilidad = costoMXN * 4
+        let MUOFactor = MUO + factorUtilidad
+        let PVMC = (MUOFactor * 0.07) + MUOFactor
+        let margenBruto = PVMC - costoMXN
+        
         return margenBruto
     }
     func porcentajeBruto() -> Double{

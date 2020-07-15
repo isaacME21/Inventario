@@ -49,8 +49,6 @@ class ConfigurationVC:UIViewController,UIImagePickerControllerDelegate,UINavigat
     
     
     //MARK: Funciones de Botones
-
-
     @IBAction func CameraTapped(_ sender: UIBarButtonItem) {
         
         let alert : UIAlertController = UIAlertController(title: "Escoge una Imagen", message: nil, preferredStyle: .actionSheet)

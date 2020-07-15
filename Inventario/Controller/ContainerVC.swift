@@ -10,8 +10,11 @@ import UIKit
 
 class ContainerVC: UIViewController {
     
-    var sideMenuOpen = false
     
+    //MARK: EL CONTENEDOR DEL MENU
+    ///ESTE CONTROLADOR SE ENCARGA DE LA ANIMACION DEL MENU.
+    ///EL MENU SE MUESTRA DE MANERA LATERAL 
+    var sideMenuOpen = false
     @IBOutlet weak var sideMenuConstraint: NSLayoutConstraint!
     override func viewDidLoad() {
         super.viewDidLoad()

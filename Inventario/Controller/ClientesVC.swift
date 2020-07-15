@@ -295,7 +295,7 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
         borderTextFields1()
         
         var listo : Int = 0
-        let textfields : [UITextField?] = [clienteID,deudaMaxima,nombre,apellido,email,telefono1,direccion1,ciudad,pais,CP,pass]
+        let textfields : [UITextField?] = [clienteID,nombre,apellido,email,telefono1,direccion1,ciudad,pais,CP,pass]
         
         for x in textfields {
             if (x?.text?.isEmpty)!{
@@ -313,11 +313,6 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
             clienteID.layer.borderWidth = 0
         }
         
-        if (deudaMaxima.text?.isEmpty)! {
-            deudaMaxima.layer.borderColor = errorColor.cgColor
-        }else {
-            deudaMaxima.layer.borderWidth = 0
-        }
         
         if (nombre.text?.isEmpty)! {
             nombre.layer.borderColor = errorColor.cgColor
@@ -377,7 +372,7 @@ class ClientesVC: UIViewController, UITextFieldDelegate, UITableViewDelegate, UI
         }
         
         
-        if listo == 11{
+        if listo == 10{
             saveButton.isUserInteractionEnabled = true
             saveButton.alpha = 1
             borderTextFields2()

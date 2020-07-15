@@ -84,6 +84,8 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
             loadArticulos(Fechas: fechasSorted)
         case 3:
             loadUsuarios(Fechas: fechasSorted)
+        case 5:
+            loadVentas(Fechas: fechasSorted)
         default:
             alertInput()
         }
@@ -97,7 +99,7 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! PDFVC
         destinationVC.reporte = reportesArray
-        if reporte == 1{
+        if reporte == 1 || reporte == 5{
             destinationVC.reportePedidos = 1
         }
         else if reporte == 4{
@@ -119,12 +121,16 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
             self.articulos()
         }))
         
-        alert.addAction(UIAlertAction(title: "Usuarios", style: .default, handler: { _ in
-            self.usuarios()
-        }))
+//        alert.addAction(UIAlertAction(title: "Usuarios", style: .default, handler: { _ in
+//            self.usuarios()
+//        }))
         
         alert.addAction(UIAlertAction(title: "Codigo de Barras", style: .default, handler: { _ in
             self.codigoDeBarras()
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Ventas", style: .default, handler: { _ in
+            self.ventas()
         }))
         
         alert.addAction(UIAlertAction.init(title: "Cancelar", style: .cancel, handler: nil))
@@ -166,6 +172,15 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
         loadArticulos(Collection: "Zapatos")
         reporte = 4
     }
+    
+    func ventas(){
+        self.title = "Reporte de Ventas"
+        almacenes.isEnabled = false
+        almacenes.isHidden = true
+        almacenes.text?.removeAll()
+        reporte = 5
+    }
+    
     
     // MARK: UIPickerView Delegation
     
@@ -291,155 +306,284 @@ class ReportesVC: UIViewController,FSCalendarDataSource, FSCalendarDelegate, UIP
         let reference : CollectionReference = db.collection("Users")
         loadOpcion(reference: reference, Fechas: Fechas)
     }
+    func loadVentas(Fechas : [Date]) {
+        reportesArray.removeAll()
+        let reference : CollectionReference = db.collection("Compras")
+        loadOpcion(reference: reference, Fechas: Fechas)
+    }
+    
     
     //TODO: FUNCION PARA CARGAR LAS OPCIONES
     func loadOpcion(reference : CollectionReference , Fechas : [Date])  {
         
         if opcion == 1{
-            let startOfDate = Fechas[0].startOfDay
-            let endOfDate = Fechas[1].endOfDay
-            reference
-                .whereField("Fecha", isGreaterThanOrEqualTo: startOfDate)
-                .whereField("Fecha", isLessThanOrEqualTo: endOfDate)
-                .getDocuments{ (querySnapshot, err) in
-                    if let err = err {
-                        print("Error getting documents: \(err)")
-                    } else {
-                        for document in querySnapshot!.documents {
-                            print("\(document.documentID)")
-                            let data = document.data()
-                            let fecha = data["Fecha"] as! Timestamp
-                            let item : ReporteItem = ReporteItem()
-                            item.nombre = document.documentID
-                            item.fecha = fecha.dateValue()
-                            
-                            if let cantidadArray = data["Articulos"] as? NSMutableArray{
-                                var cantidadTemp : [Int] = [Int]()
-                                for x in cantidadArray{cantidadTemp.append(x as! Int)}
+            if reporte == 5 {
+                print("Entro en la opcion correcta")
+                let startOfDate = Fechas[0].startOfDay
+                let endOfDate = Fechas[1].endOfDay
+                reference
+                    .whereField("Fehca", isGreaterThanOrEqualTo: startOfDate)
+                    .whereField("Fehca", isLessThanOrEqualTo: endOfDate)
+                    .getDocuments{ (querySnapshot, err) in
+                        if let err = err {
+                            print("Error getting documents: \(err)")
+                        } else {
+                            for document in querySnapshot!.documents {
+                                print("\(document.documentID)")
+                                let data = document.data()
+                                let fecha = data["Fehca"] as! Timestamp
+                                let item : ReporteItem = ReporteItem()
+                                item.nombre = document.documentID
+                                item.fecha = fecha.dateValue()
+                                item.almacen = ""
                                 
-                                item.cantidad = cantidadTemp
-                            }
-                            
-                            if let articulosArray = data["ArticuloOrden"] as? NSMutableArray{
-                                var articulosTemp : [String] = [String]()
-                                for x in articulosArray{articulosTemp.append(x as! String)}
-                                
-                                item.articulos = articulosTemp
-                            }
-                            
-                            if let almacenDestino = data["Almacen 2"] as? String{
-                                item.almacen = almacenDestino
-                            }
-                            
-                            self.reportesArray.append(item)
-                        }
-                        if self.almacenes.text?.isEmpty == false{
-                            var array : [ReporteItem] = [ReporteItem]()
-                            for x in self.reportesArray{
-                                if x.almacen == self.almacenes.text{
-                                    array.append(x)
+                                if let cantidadArray = data["ItemsCantidad"] as? NSMutableArray{
+                                    var cantidadTemp : [Int] = [Int]()
+                                    for x in cantidadArray{cantidadTemp.append(x as! Int)}
+                                    item.cantidad = cantidadTemp
                                 }
+                                
+                                if let articulosArray = data["ItemsNombre"] as? NSMutableArray{
+                                    var articulosTemp : [String] = [String]()
+                                    for x in articulosArray{articulosTemp.append(x as! String)}
+                                    item.articulos = articulosTemp
+                                }
+                                
+                                
+                                
+                                self.reportesArray.append(item)
                             }
-                            self.reportesArray = array
+                            self.tabla.reloadData()
                         }
-                        self.tabla.reloadData()
-                    }
+                }
+            }else{
+                let startOfDate = Fechas[0].startOfDay
+                let endOfDate = Fechas[1].endOfDay
+                reference
+                    .whereField("Fecha", isGreaterThanOrEqualTo: startOfDate)
+                    .whereField("Fecha", isLessThanOrEqualTo: endOfDate)
+                    .getDocuments{ (querySnapshot, err) in
+                        if let err = err {
+                            print("Error getting documents: \(err)")
+                        } else {
+                            for document in querySnapshot!.documents {
+                                print("\(document.documentID)")
+                                let data = document.data()
+                                let fecha = data["Fecha"] as! Timestamp
+                                let item : ReporteItem = ReporteItem()
+                                item.nombre = document.documentID
+                                item.fecha = fecha.dateValue()
+                                
+                                if let cantidadArray = data["Articulos"] as? NSMutableArray{
+                                    var cantidadTemp : [Int] = [Int]()
+                                    for x in cantidadArray{cantidadTemp.append(x as! Int)}
+                                    
+                                    item.cantidad = cantidadTemp
+                                }
+                                
+                                if let articulosArray = data["ArticuloOrden"] as? NSMutableArray{
+                                    var articulosTemp : [String] = [String]()
+                                    for x in articulosArray{articulosTemp.append(x as! String)}
+                                    
+                                    item.articulos = articulosTemp
+                                }
+                                
+                                if let almacenDestino = data["Almacen 2"] as? String{
+                                    item.almacen = almacenDestino
+                                }
+                                
+                                self.reportesArray.append(item)
+                            }
+                            if self.almacenes.text?.isEmpty == false{
+                                var array : [ReporteItem] = [ReporteItem]()
+                                for x in self.reportesArray{
+                                    if x.almacen == self.almacenes.text{
+                                        array.append(x)
+                                    }
+                                }
+                                self.reportesArray = array
+                            }
+                            self.tabla.reloadData()
+                        }
+                }
             }
+            
+            
         }else if opcion == 2{
-            let startOfDate = Fechas[0].startOfDay
-            let endOfDate = Fechas[0].endOfDay
-            reference
-                .whereField("Fecha", isGreaterThanOrEqualTo: startOfDate)
-                .whereField("Fecha", isLessThanOrEqualTo: endOfDate)
-                .getDocuments{ (querySnapshot, err) in
-                    if let err = err {
-                        print("Error getting documents: \(err)")
-                    } else {
-                        for document in querySnapshot!.documents {
-                            print("\(document.documentID)")
-                            let data = document.data()
-                            let fecha = data["Fecha"] as! Timestamp
-                            let item : ReporteItem = ReporteItem()
-                            item.nombre = document.documentID
-                            item.fecha = fecha.dateValue()
-                            
-                            if let cantidadArray = data["Articulos"] as? NSMutableArray{
-                                var cantidadTemp : [Int] = [Int]()
-                                for x in cantidadArray{cantidadTemp.append(x as! Int)}
+            if reporte == 5{
+                print("Entro en la opcion correcta")
+                let startOfDate = Fechas[0].startOfDay
+                let endOfDate = Fechas[0].endOfDay
+                reference
+                    .whereField("Fehca", isGreaterThanOrEqualTo: startOfDate)
+                    .whereField("Fehca", isLessThanOrEqualTo: endOfDate)
+                    .getDocuments{ (querySnapshot, err) in
+                        if let err = err {
+                            print("Error getting documents: \(err)")
+                        } else {
+                            for document in querySnapshot!.documents {
+                                print("\(document.documentID)")
+                                let data = document.data()
+                                let fecha = data["Fehca"] as! Timestamp
+                                let item : ReporteItem = ReporteItem()
+                                item.nombre = document.documentID
+                                item.fecha = fecha.dateValue()
+                                item.almacen = ""
                                 
-                                item.cantidad = cantidadTemp
-                            }
-                            
-                            if let articulosArray = data["ArticuloOrden"] as? NSMutableArray{
-                                var articulosTemp : [String] = [String]()
-                                for x in articulosArray{articulosTemp.append(x as! String)}
-                                
-                                item.articulos = articulosTemp
-                            }
-                            
-                            if let almacenDestino = data["Almacen 2"] as? String{
-                                item.almacen = almacenDestino
-                            }
-                            
-                            self.reportesArray.append(item)
-                        }
-                        if self.almacenes.text?.isEmpty == false{
-                            var array : [ReporteItem] = [ReporteItem]()
-                            for x in self.reportesArray{
-                                if x.almacen == self.almacenes.text{
-                                    array.append(x)
+                                if let cantidadArray = data["ItemsCantidad"] as? NSMutableArray{
+                                    var cantidadTemp : [Int] = [Int]()
+                                    for x in cantidadArray{cantidadTemp.append(x as! Int)}
+                                    item.cantidad = cantidadTemp
                                 }
+                                
+                                if let articulosArray = data["ItemsNombre"] as? NSMutableArray{
+                                    var articulosTemp : [String] = [String]()
+                                    for x in articulosArray{articulosTemp.append(x as! String)}
+                                    item.articulos = articulosTemp
+                                }
+                                
+                                
+                                
+                                self.reportesArray.append(item)
                             }
-                            self.reportesArray = array
+                            self.tabla.reloadData()
                         }
-                        self.tabla.reloadData()
-                    }
+                }
+            }else{
+                let startOfDate = Fechas[0].startOfDay
+                let endOfDate = Fechas[0].endOfDay
+                reference
+                    .whereField("Fecha", isGreaterThanOrEqualTo: startOfDate)
+                    .whereField("Fecha", isLessThanOrEqualTo: endOfDate)
+                    .getDocuments{ (querySnapshot, err) in
+                        if let err = err {
+                            print("Error getting documents: \(err)")
+                        } else {
+                            for document in querySnapshot!.documents {
+                                print("\(document.documentID)")
+                                let data = document.data()
+                                let fecha = data["Fecha"] as! Timestamp
+                                let item : ReporteItem = ReporteItem()
+                                item.nombre = document.documentID
+                                item.fecha = fecha.dateValue()
+                                
+                                if let cantidadArray = data["Articulos"] as? NSMutableArray{
+                                    var cantidadTemp : [Int] = [Int]()
+                                    for x in cantidadArray{cantidadTemp.append(x as! Int)}
+                                    
+                                    item.cantidad = cantidadTemp
+                                }
+                                
+                                if let articulosArray = data["ArticuloOrden"] as? NSMutableArray{
+                                    var articulosTemp : [String] = [String]()
+                                    for x in articulosArray{articulosTemp.append(x as! String)}
+                                    
+                                    item.articulos = articulosTemp
+                                }
+                                
+                                if let almacenDestino = data["Almacen 2"] as? String{
+                                    item.almacen = almacenDestino
+                                }
+                                
+                                self.reportesArray.append(item)
+                            }
+                            if self.almacenes.text?.isEmpty == false{
+                                var array : [ReporteItem] = [ReporteItem]()
+                                for x in self.reportesArray{
+                                    if x.almacen == self.almacenes.text{
+                                        array.append(x)
+                                    }
+                                }
+                                self.reportesArray = array
+                            }
+                            self.tabla.reloadData()
+                        }
+                }
             }
+            
         }else{
-            reference.whereField("Fecha", isLessThanOrEqualTo: Fechas[0])
-                .getDocuments{ (querySnapshot, err) in
-                    if let err = err {
-                        print("Error getting documents: \(err)")
-                    } else {
-                        for document in querySnapshot!.documents {
-                            print("\(document.documentID)")
-                            let data = document.data()
-                            let fecha = data["Fecha"] as! Timestamp
-                            let item : ReporteItem = ReporteItem()
-                            item.nombre = document.documentID
-                            item.fecha = fecha.dateValue()
-                            
-                            if let cantidadArray = data["Articulos"] as? NSMutableArray{
-                                var cantidadTemp : [Int] = [Int]()
-                                for x in cantidadArray{cantidadTemp.append(x as! Int)}
+            if reporte == 5 {
+                print("Entro en la opcion correcta")
+                reference
+                    .whereField("Fehca", isLessThanOrEqualTo: Fechas[0])
+                    .getDocuments{ (querySnapshot, err) in
+                        if let err = err {
+                            print("Error getting documents: \(err)")
+                        } else {
+                            for document in querySnapshot!.documents {
+                                print("\(document.documentID)")
+                                let data = document.data()
+                                let fecha = data["Fehca"] as! Timestamp
+                                let item : ReporteItem = ReporteItem()
+                                item.nombre = document.documentID
+                                item.fecha = fecha.dateValue()
+                                item.almacen = ""
                                 
-                                item.cantidad = cantidadTemp
-                            }
-                            
-                            if let articulosArray = data["ArticuloOrden"] as? NSMutableArray{
-                                var articulosTemp : [String] = [String]()
-                                for x in articulosArray{articulosTemp.append(x as! String)}
-                                
-                                item.articulos = articulosTemp
-                            }
-                            
-                            if let almacenDestino = data["Almacen 2"] as? String{
-                                item.almacen = almacenDestino
-                            }
-                            
-                            self.reportesArray.append(item)
-                        }
-                        if self.almacenes.text?.isEmpty == false{
-                            var array : [ReporteItem] = [ReporteItem]()
-                            for x in self.reportesArray{
-                                if x.almacen == self.almacenes.text{
-                                    array.append(x)
+                                if let cantidadArray = data["ItemsCantidad"] as? NSMutableArray{
+                                    var cantidadTemp : [Int] = [Int]()
+                                    for x in cantidadArray{cantidadTemp.append(x as! Int)}
+                                    item.cantidad = cantidadTemp
                                 }
+                                
+                                if let articulosArray = data["ItemsNombre"] as? NSMutableArray{
+                                    var articulosTemp : [String] = [String]()
+                                    for x in articulosArray{articulosTemp.append(x as! String)}
+                                    item.articulos = articulosTemp
+                                }
+                                
+                                
+                                
+                                self.reportesArray.append(item)
                             }
-                            self.reportesArray = array
+                            self.tabla.reloadData()
                         }
-                        self.tabla.reloadData()
-                    }
+                }
+            }else{
+                reference.whereField("Fecha", isLessThanOrEqualTo: Fechas[0])
+                    .getDocuments{ (querySnapshot, err) in
+                        if let err = err {
+                            print("Error getting documents: \(err)")
+                        } else {
+                            for document in querySnapshot!.documents {
+                                print("\(document.documentID)")
+                                let data = document.data()
+                                let fecha = data["Fecha"] as! Timestamp
+                                let item : ReporteItem = ReporteItem()
+                                item.nombre = document.documentID
+                                item.fecha = fecha.dateValue()
+                                
+                                if let cantidadArray = data["Articulos"] as? NSMutableArray{
+                                    var cantidadTemp : [Int] = [Int]()
+                                    for x in cantidadArray{cantidadTemp.append(x as! Int)}
+                                    
+                                    item.cantidad = cantidadTemp
+                                }
+                                
+                                if let articulosArray = data["ArticuloOrden"] as? NSMutableArray{
+                                    var articulosTemp : [String] = [String]()
+                                    for x in articulosArray{articulosTemp.append(x as! String)}
+                                    
+                                    item.articulos = articulosTemp
+                                }
+                                
+                                if let almacenDestino = data["Almacen 2"] as? String{
+                                    item.almacen = almacenDestino
+                                }
+                                
+                                self.reportesArray.append(item)
+                            }
+                            if self.almacenes.text?.isEmpty == false{
+                                var array : [ReporteItem] = [ReporteItem]()
+                                for x in self.reportesArray{
+                                    if x.almacen == self.almacenes.text{
+                                        array.append(x)
+                                    }
+                                }
+                                self.reportesArray = array
+                            }
+                            self.tabla.reloadData()
+                        }
+                }
             }
         }
     }

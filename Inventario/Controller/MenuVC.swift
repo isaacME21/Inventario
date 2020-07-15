@@ -10,6 +10,8 @@ import UIKit
 
 class MenuVC: UITableViewController {
 
+    //MARK: MENU
+    ///CUANDO SE SELECCIONA ALGUN ITEM DE LA TABLA DEL MENU, SE NOTIFICA AL NOTIFICATION CENTER PARA MOSTRAR LA PANTALLA
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(indexPath.row)
         NotificationCenter.default.post(name: NSNotification.Name("ToggleSideMenu"), object: nil)
@@ -19,10 +21,9 @@ class MenuVC: UITableViewController {
         case 1: NotificationCenter.default.post(name: NSNotification.Name("gotoCatProd"), object: nil)
         case 2: NotificationCenter.default.post(name: NSNotification.Name("gotoProovedores"), object: nil)
         case 3: NotificationCenter.default.post(name: NSNotification.Name("gotoClientes"), object: nil)
-        case 4: NotificationCenter.default.post(name: NSNotification.Name("gotoVisualizar"), object: nil)
-        case 5: NotificationCenter.default.post(name: NSNotification.Name("gotoAlmacen"), object: nil)
-        case 6: NotificationCenter.default.post(name: NSNotification.Name("gotoTraspaso"), object: nil)
-        case 7: NotificationCenter.default.post(name: NSNotification.Name("gotoReportes"), object: nil)
+        case 4: NotificationCenter.default.post(name: NSNotification.Name("gotoAlmacen"), object: nil)
+        case 5: NotificationCenter.default.post(name: NSNotification.Name("gotoTraspaso"), object: nil)
+        case 6: NotificationCenter.default.post(name: NSNotification.Name("gotoReportes"), object: nil)
         default: break
         }
     }

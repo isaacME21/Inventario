@@ -25,14 +25,35 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
     @IBOutlet weak var cambioTextField: UITextField!
     
     
+    class Apartado{
+        var nombre = ""
+        var correo = ""
+        var fecha = Date()
+        var articulos = [String]()
+        var articulosCantidad = [Int]()
+        var articulosPrecio = [Double]()
+        var id = ""
+    }
+    
+    
     var articulosCollection = [ArticulosPOS]()
     var articulosComprados = [ArticulosPOS]()
+    var articulosApartados = [ArticulosPOS]()
+    var Apartados = [Apartado]()
+    var apartadoSeleccionadoIndex = 0
     var almacenes = [String]()
     let db = Firestore.firestore()
     let almacenPicker : UIPickerView = UIPickerView()
+    let pickerFrame = UIPickerView(frame: CGRect(x: 5, y: 20, width: 250, height: 140))
     var totalString : String = ""
     var totalDouble : Double = 0.0
     var totalCompra : Double = 0.0
+    var nombreApartado = ""
+    var correoApartado = ""
+    
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,12 +67,15 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
         tarjetaButton.backgroundColor = .red
         efectivoButton.backgroundColor = .red
         
+        
+        pickerFrame.dataSource = self
+        pickerFrame.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
         SVProgressHUD.show(withStatus: "Cargando")
         DispatchQueue.global().async {
-            self.loadAlmacenes()
+            self.loadApartados()
         }
     }
     
@@ -91,12 +115,18 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
             cambioTextField.text = ""
         case 12:
             print("Pago en efectivo")
+            saveCompras(compras: articulosComprados)
+            alerta()
             articulosComprados.removeAll()
             tabla.reloadData()
             cambioTextField.text = "\(totalDouble - totalCompra)"
             #warning("Resolver problema con las existencias")
         case 13:
             print("Pago con tarjeta")
+            alertaCompra()
+        case 14:
+            print("Apartado")
+            alertaApartado()
         default:
             print("Esa opcion no existe")
         }
@@ -137,6 +167,9 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell : CustomTableViewCell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
         
+        print(articulosComprados[indexPath.row].seleccionado)
+        print(articulosComprados[indexPath.row].precio)
+        
         cell.profilePhoto.image = articulosComprados[indexPath.row].image!
         cell.upLabel.text = "Articulo"
         cell.diaLabel.text = "Precio"
@@ -158,6 +191,7 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
     func deleteAction(at indexPath: IndexPath) -> UIContextualAction{
         let action : UIContextualAction = UIContextualAction(style: .destructive, title: "delete") { (action, view, completion) in
             self.articulosComprados.remove(at: indexPath.row)
+            self.crearTotal()
             self.tabla.reloadData()
             completion(true)
         }
@@ -173,15 +207,34 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
         return 1
     }
     func pickerView( _ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return almacenes.count
+        if pickerView == pickerFrame{
+            return Apartados.count
+        }else{
+            return almacenes.count
+        }
+        
     }
     func pickerView( _ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return almacenes[row]
+        if pickerView == pickerFrame{
+            let df = DateFormatter()
+            df.dateFormat = "yyyy-MM-dd"
+            let now = df.string(from: Apartados[row].fecha)
+            return Apartados[row].nombre + " " + now
+        }else{
+          return almacenes[row]
+        }
+        
     }
     func pickerView( _ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        SVProgressHUD.show(withStatus: "Cargando")
-        DispatchQueue.global().async {
-            self.loadArticulos(almacen: self.almacenes[row])
+        if pickerView == pickerFrame{
+            print("Funciona")
+            apartadoSeleccionadoIndex = row
+        }else{
+            SVProgressHUD.show(withStatus: "Cargando")
+            almacenTextField.text = almacenes[row]
+            DispatchQueue.global().async {
+                self.loadArticulos(almacen: self.almacenes[row])
+            }
         }
     }
     
@@ -212,16 +265,167 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
         if  articulosCollection[indexPath.row].seleccionado < articulosCollection[indexPath.row].num {
             articulosCollection[indexPath.row].seleccionado = articulosComprados[indexPath.row].seleccionado + 1
             existenciasTextField.text = "\(articulosCollection[indexPath.row].num - articulosCollection[indexPath.row].seleccionado)"
-            
-            var total = 0.0
-            for y in articulosComprados{ total = total + (y.precio! * Double(y.seleccionado)) }
-            totalTextField.text = "\(total)"
+            self.crearTotal()
         }
         tabla.reloadData()
     }
     
+    func crearTotal(){
+        var total = 0.0
+        for y in articulosComprados{ total = total + (y.precio! * Double(y.seleccionado)) }
+        totalTextField.text = "\(total)"
+    }
+    
+    
+    //MARK: Mostrar alerta
+    func alerta(){
+        var ticket = "Compra Exitosa \n"
+        for compra in articulosComprados{
+            ticket = ticket + compra.name + "  x\(compra.seleccionado) \n"
+        }
+        ticket = ticket + "\n" + totalTextField.text!
+        
+        let alert = UIAlertController(title: "", message: ticket, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func alerta2(){
+        let alert = UIAlertController(title: "", message: "Apartado Completado", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+            
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    //MARK: Alerta para confirmar el pago con tarjeta.
+    func alertaCompra(){
+        let alert = UIAlertController(title: "", message: "Compra Finalizada", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+            self.saveCompras(compras: self.articulosComprados)
+            self.alerta()
+            self.articulosComprados.removeAll()
+            self.tabla.reloadData()
+        }))
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    //MARK: Alerta para confirmar el apartado
+    func alertaApartado(){
+        let alert = UIAlertController(title: "", message: "Apartado", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Buscar Apartado", style: .default, handler: { action in
+            let alert = UIAlertController(title: "Apartados", message: "\n\n\n\n\n\n", preferredStyle: .alert)
+            alert.isModalInPopover = true
+            
+           
+            alert.view.addSubview(self.pickerFrame)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (UIAlertAction) in
+                
+                print("Seleccionaste un Apartado")
+                if !self.Apartados.isEmpty{
+                    let apartadoSeleccionado = self.Apartados[self.apartadoSeleccionadoIndex]
+    
+                    for (index, articulos) in apartadoSeleccionado.articulos.enumerated(){
+                        #warning("creo que algo malo puede suceder aqui")
+                        let newArticulo = ArticulosPOS(nombre: articulos, numero: apartadoSeleccionado.articulosCantidad[index])
+                        newArticulo.seleccionado = apartadoSeleccionado.articulosCantidad[index]
+                        newArticulo.precio = apartadoSeleccionado.articulosPrecio[index]
+                        newArticulo.image = UIImage(named: "MarcoFotoBlack")
+                        self.articulosComprados.append(newArticulo)
+                    }
+                    self.eliminarApartado(id: apartadoSeleccionado.id)
+                    self.tabla.reloadData()
+                }
+
+            }))
+            self.present(alert,animated: true, completion: nil )
+            
+        }))
+        alert.addAction(UIAlertAction(title: "Apartar", style: .default, handler: { action in
+            
+            let alert = UIAlertController(title: "What's your name?", message: nil, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+            alert.addTextField(configurationHandler: { textField in
+                textField.placeholder = "Ingresa su Nombre"
+            })
+            alert.addTextField { textfield2 in
+                textfield2.placeholder = "Ingresa su correo electronico"
+            }
+
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+                self.nombreApartado = alert.textFields?.first?.text ?? ""
+                self.correoApartado = alert.textFields?.last?.text ?? ""
+                self.saveApartados(apartados: self.articulosComprados)
+                self.articulosComprados.removeAll()
+                self.tabla.reloadData()
+                DispatchQueue.global().async {
+                    self.loadApartados()
+                }
+                self.alerta2()
+            }))
+
+            self.present(alert, animated: true)
+            
+            
+            
+        }))
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    
+    @objc func compraCreditoFinalizada() {
+        
+    }
     
     //MARK: FIREBASE METHODS
+    func loadApartados(){
+        Apartados.removeAll()
+         db.collection("Apartados").getDocuments { (QuerySnapshot, err) in
+             if let err : Error = err {
+                 print("Error getting documents: \(err)")
+             } else {
+                 for document in QuerySnapshot!.documents {
+                     //print("\(document.documentID) => \(document.data())")
+                     let data = document.data()
+                     let fecha : Timestamp = data["Fehca"] as! Timestamp
+                     let nombre : String = data["Nombre"] as! String
+                     let correo : String = data["Correo"] as! String
+                     
+                     let brookenArticulosCantidad : NSMutableArray = (data["ItemsCantidad"] as! NSMutableArray)
+                     let brookenArticulos : NSMutableArray = (data["ItemsNombre"] as! NSMutableArray)
+                     let brokenPrecios : NSMutableArray = (data["ItemsPrecio"] as! NSMutableArray)
+                     
+                     var articulosFixed : [String] = [String]()
+                     var articulosCantidadFixed : [Int] = [Int]()
+                     var articulosPreciosFixed : [Double] = [Double]()
+                     
+                     for x in brookenArticulos{articulosFixed.append(x as! String)}
+                     for y in brookenArticulosCantidad{articulosCantidadFixed.append(y as! Int)}
+                     for z in brokenPrecios{articulosPreciosFixed.append(z as! Double)}
+                     
+                     let newApartado = Apartado()
+                     newApartado.articulos = articulosFixed
+                     newApartado.articulosCantidad = articulosCantidadFixed
+                     newApartado.articulosPrecio = articulosPreciosFixed
+                     newApartado.fecha = fecha.dateValue()
+                     newApartado.nombre = nombre
+                     newApartado.correo = correo
+                     newApartado.id = document.documentID
+                     
+                     self.Apartados.append(newApartado)
+                 }
+                 print("Se cargaron los Apartados")
+                self.loadAlmacenes()
+             }
+         }
+     }
+    
     func loadAlmacenes(){
         db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").getDocuments { (QuerySnapshot, err) in
             if let err : Error = err {
@@ -240,6 +444,7 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
        articulosCollection.removeAll()
         db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(almacen).collection("Articulos").getDocuments { (QuerySnapshot, err) in
             if let err : Error = err {
+                SVProgressHUD.dismiss()
                 print("Error getting documents: \(err)")
             } else {
                 for document in QuerySnapshot!.documents {
@@ -265,6 +470,7 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
                     item.precio = Double(precioTemp!)
                     print(precioTemp)
                 } else {
+                    SVProgressHUD.dismiss()
                     print("Document does not exist")
                 }
             }
@@ -272,6 +478,10 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
         print("Se cargaron los precios")
         self.loadImagenes()
     }
+    
+    
+ 
+    
     
     
     func loadImagenes(){
@@ -285,6 +495,7 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
                 if let error = error {
                     // Handle any errors
                     print("Error took place \(error.localizedDescription)")
+                    SVProgressHUD.dismiss()
                 } else {
                     // Get the download URL for 'images/stars.jpg'
                     print("Profile image download URL \(String(describing: url!))")
@@ -305,6 +516,114 @@ class POSVC: UIViewController, UICollectionViewDelegate,UICollectionViewDataSour
                 }
             }
         }
+    }
+    
+    
+    func eliminarApartado(id : String){
+        db.collection("Apartados").document(id).delete() { err in
+            if let err = err {
+                print("Error removing document: \(err)")
+            } else {
+                print("Document successfully removed!")
+                self.loadApartados()
+            }
+        }
+    }
+    
+    
+    func saveCompras(compras : [ArticulosPOS]){
+        var itemsCantidad = [Int]()
+        var itemsNombre = [String]()
+        var itemsPrecio = [Double]()
+        
+        for articulo in compras{
+            itemsCantidad.append(articulo.seleccionado)
+            itemsNombre.append(articulo.name)
+            itemsPrecio.append(articulo.precio!)
+        }
+        
+        
+        db.collection("Compras").addDocument(data: [
+            "Almacen" : almacenTextField.text!,
+            "Fecha" : Date(),
+            "ItemsCantidad" : itemsCantidad,
+            "ItemsNombre" : itemsNombre,
+            "ItemsPrecio" : itemsPrecio,
+            "Total" : Int(totalCompra)]) { err in
+                if let err = err {
+                    print("Error adding document: \(err)")
+                } else {
+                    print("Document added")
+                }
+        }
+        
+        self.actualizarAlmacen(compras: compras)
+    }
+    
+    func actualizarAlmacen(compras : [ArticulosPOS]){
+        let articulosNum = compras.count
+        for (index, compra) in compras.enumerated(){
+            let cantidad = compra.num - compra.seleccionado
+            
+            db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(almacenTextField.text!).collection("Articulos").document(compra.name).updateData([
+                "Cantidad": cantidad
+            ]) { err in
+                if let err = err {
+                    print("Error updating document: \(err)")
+                } else {
+                    print("Document successfully updated")
+                    
+                    if cantidad == 0 {
+                        self.eliminarDeAlmacen(compra: compra.name)
+                    }
+                    if index == articulosNum - 1{
+                        self.loadArticulos(almacen: self.almacenTextField.text!)
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    func eliminarDeAlmacen(compra : String){
+        db.collection("SexyRevolverData").document("Inventario").collection("Almacenes").document(almacenTextField.text!).collection("Articulos").document(compra).delete() { err in
+            if let err = err {
+                print("Error removing document: \(err)")
+            } else {
+                print("Document successfully removed!")
+            }
+        }
+    }
+    
+    
+    func saveApartados(apartados : [ArticulosPOS]){
+        var itemsCantidad = [Int]()
+        var itemsNombre = [String]()
+        var itemsPrecio = [Double]()
+        
+        for articulo in apartados{
+            itemsCantidad.append(articulo.seleccionado)
+            itemsNombre.append(articulo.name)
+            itemsPrecio.append(articulo.precio!)
+        }
+        
+        
+        db.collection("Apartados").addDocument(data: [
+            "Almacen" : almacenTextField.text!,
+            "Nombre" : nombreApartado,
+            "Correo" : correoApartado,
+            "Fehca" : Date(),
+            "ItemsCantidad" : itemsCantidad,
+            "ItemsNombre" : itemsNombre,
+            "ItemsPrecio" : itemsPrecio,
+            "Total" : Int(totalCompra)]) { err in
+                if let err = err {
+                    print("Error adding document: \(err)")
+                } else {
+                    print("Document added")
+                }
+        }
+        
     }
 
 }

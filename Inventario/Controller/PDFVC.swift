@@ -1,4 +1,4 @@
-//
+ //
 //  PDFVC.swift
 //  Inventario
 //
@@ -260,7 +260,7 @@ class PDFVC: UIViewController, WKNavigationDelegate, MFMailComposeViewController
         
         // Create a tables
         for x in reporte!{
-            let title = NSMutableAttributedString(string: x.nombre + "  " + x.almacen!, attributes: [
+            let title = NSMutableAttributedString(string: x.nombre + "  " + x.almacen! , attributes: [
                 .font: UIFont.boldSystemFont(ofSize: 18.0),
                 .foregroundColor: UIColor(red: 0.171875, green: 0.2421875, blue: 0.3125, alpha: 1.0)
                 ])

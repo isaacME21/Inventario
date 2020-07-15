@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U2g-e9-mtR">
-    <device id="ipad9_7" orientation="landscape">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="U2g-e9-mtR">
+    <device id="ipad9_7" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -20,20 +19,22 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Cambiar Imagen" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eOB-rw-A4F">
-                                <rect key="frame" x="77" y="236" width="200" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="MarcoFotoBlack" translatesAutoresizingMaskIntoConstraints="NO" id="fid-ce-dC4">
-                                <rect key="frame" x="77" y="284" width="200" height="200"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mcb-Rr-GIL">
-                                <rect key="frame" x="312" y="673" width="400" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Q4O-qs-g2U">
+                                <rect key="frame" x="77" y="234" width="256" height="291.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cambiar Imagen" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eOB-rw-A4F">
+                                        <rect key="frame" x="0.0" y="0.0" width="256" height="27.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MarcoFotoBlack" translatesAutoresizingMaskIntoConstraints="NO" id="fid-ce-dC4">
+                                        <rect key="frame" x="0.0" y="35.5" width="256" height="256"/>
+                                    </imageView>
+                                </subviews>
+                            </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mcb-Rr-GIL">
+                                <rect key="frame" x="312" y="671" width="400" height="42"/>
                                 <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <state key="normal" title="Guardar Todo">
@@ -43,36 +44,65 @@
                                     <action selector="Save:" destination="iCX-fI-r4O" eventType="touchUpInside" id="XEG-U1-CjM"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Cambiar Titulo" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O23-qL-gF5">
-                                <rect key="frame" x="730" y="399" width="200" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" borderStyle="line" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="4KJ-yY-hxN">
-                                <rect key="frame" x="730" y="447" width="200" height="50"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Cambiar Footer" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Be2-YM-HcW">
-                                <rect key="frame" x="730" y="236" width="200" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" borderStyle="line" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0bu-al-ILc">
-                                <rect key="frame" x="730" y="297" width="200" height="50"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="64" translatesAutoresizingMaskIntoConstraints="NO" id="zlW-X5-ZjA">
+                                <rect key="frame" x="730" y="236" width="200" height="248"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="21" translatesAutoresizingMaskIntoConstraints="NO" id="vJN-1R-hUT">
+                                        <rect key="frame" x="0.0" y="0.0" width="200" height="98.5"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cambiar Footer" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Be2-YM-HcW">
+                                                <rect key="frame" x="0.0" y="0.0" width="200" height="27.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" borderStyle="line" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0bu-al-ILc">
+                                                <rect key="frame" x="0.0" y="48.5" width="200" height="50"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="50" id="Sfp-L4-ef1"/>
+                                                    <constraint firstAttribute="width" secondItem="0bu-al-ILc" secondAttribute="height" multiplier="4:1" id="f0j-eL-vRE"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="CDB-xF-H1O">
+                                        <rect key="frame" x="0.0" y="162.5" width="200" height="85.5"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cambiar Titulo" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O23-qL-gF5">
+                                                <rect key="frame" x="0.0" y="0.0" width="200" height="27.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" borderStyle="line" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="4KJ-yY-hxN">
+                                                <rect key="frame" x="0.0" y="35.5" width="200" height="50"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="4KJ-yY-hxN" secondAttribute="height" multiplier="4:1" id="Tpt-Xv-kbf"/>
+                                                    <constraint firstAttribute="height" constant="50" id="i77-k7-4Ea"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Zc9-y6-Ghz" firstAttribute="top" secondItem="zlW-X5-ZjA" secondAttribute="bottom" constant="284" id="0Wt-Ws-J95"/>
+                            <constraint firstItem="Q4O-qs-g2U" firstAttribute="top" secondItem="3o2-Tu-1YC" secondAttribute="bottom" constant="184" id="8ey-1V-Y54"/>
+                            <constraint firstItem="Q4O-qs-g2U" firstAttribute="leading" secondItem="MS9-Wl-89n" secondAttribute="leadingMargin" constant="57" id="9RK-Z2-0eC"/>
+                            <constraint firstItem="mcb-Rr-GIL" firstAttribute="top" secondItem="Q4O-qs-g2U" secondAttribute="bottom" constant="145.5" id="ARr-gr-E9H"/>
+                            <constraint firstItem="zlW-X5-ZjA" firstAttribute="top" secondItem="3o2-Tu-1YC" secondAttribute="bottom" constant="186" id="N0T-gs-e5N"/>
+                            <constraint firstItem="Zc9-y6-Ghz" firstAttribute="top" secondItem="mcb-Rr-GIL" secondAttribute="bottom" constant="55" id="Ohs-bZ-b5c"/>
+                            <constraint firstItem="mcb-Rr-GIL" firstAttribute="leading" secondItem="MS9-Wl-89n" secondAttribute="leadingMargin" constant="292" id="PLF-Iv-upF"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="mcb-Rr-GIL" secondAttribute="trailing" constant="292" id="Qdo-LU-VoW"/>
+                            <constraint firstItem="zlW-X5-ZjA" firstAttribute="leading" secondItem="Q4O-qs-g2U" secondAttribute="trailing" constant="397" id="ifn-gN-A9j"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="zlW-X5-ZjA" secondAttribute="trailing" constant="74" id="lRV-4W-CpW"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="tu6-km-SZQ">
                         <barButtonItem key="leftBarButtonItem" title="Salir" id="ER2-JF-etY">
@@ -102,7 +132,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="U2g-e9-mtR" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="ixG-oH-fjf">
-                        <rect key="frame" x="0.0" y="20" width="1024" height="50"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -116,6 +146,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="MarcoFotoBlack" width="204.80000305175781" height="204.80000305175781"/>
+        <image name="MarcoFotoBlack" width="256" height="256"/>
     </resources>
 </document>
